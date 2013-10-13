@@ -19,7 +19,8 @@ def prefix_for_name(name):
 
 
 def get_url_prefix(settings):
-    return settings['pyramid_frontend.image_url_prefix'].rstrip('/')
+    return settings.get('pyramid_frontend.image_url_prefix', '/img').\
+        rstrip('/')
 
 
 def save_locally(path, f):

@@ -22,7 +22,7 @@ postprocessors = {
 class FilterChain(object):
 
     def __init__(self, suffix, filters=(), extension='png',
-                 width=None, height=None, no_saver=False, no_thumb=False,
+                 width=None, height=None, no_thumb=False,
                  pad=False, pad_width=False, pad_height=False,
                  crop=False, crop_whitespace=False,
                  background='white', enlarge=False,
@@ -34,7 +34,10 @@ class FilterChain(object):
         self.height = height
         self.extension = extension
 
-        assert filter_sep not in suffix
+        assert filter_sep not in suffix, \
+            "filter suffix cannot contain %r" % filter_sep
+        assert suffix.lower() == suffix, \
+            "filter suffix must be lowercase"
 
         if not no_thumb:
             self.filters.append(ThumbFilter(
@@ -43,11 +46,10 @@ class FilterChain(object):
                 crop=crop, crop_whitespace=crop_whitespace,
                 background=background, enlarge=enlarge))
 
-        if not no_saver:
-            klass = savers[self.extension]
-            self.filters.append(klass(**saver_kwargs))
+        saver_class = savers[self.extension]
+        self.filters.append(saver_class(**saver_kwargs))
 
-        self.filters.append(postprocessors[self.extension])
+        self.filters.append(postprocessors[self.extension]())
 
     def basename(self, name, original_ext):
         return ''.join([name,
@@ -61,14 +63,9 @@ class FilterChain(object):
     def run_chain(self, image_data):
         for filter in self.filters:
             image_data = filter(image_data)
-            if image_data is None:
-                break
         return image_data
 
     def write(self, dest_path, filtered):
-        if not filtered:
-            return False
-
         # We have the final image data, now save it.
         dest_dir = os.path.dirname(dest_path)
         if not os.path.exists(dest_dir):

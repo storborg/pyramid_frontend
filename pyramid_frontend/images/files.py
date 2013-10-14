@@ -23,6 +23,12 @@ def get_url_prefix(settings):
         rstrip('/')
 
 
+def save_image(settings, name, original_ext, f):
+    prefix = prefix_for_name(name)
+    ensure_dirs(settings, prefix)
+    save_locally(original_path(settings, name, original_ext), f)
+
+
 def save_locally(path, f):
     diskf = open(path, 'w')
     f.seek(0)

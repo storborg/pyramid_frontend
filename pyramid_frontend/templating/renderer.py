@@ -58,8 +58,3 @@ class MakoRenderer(object):
                 del exc_info
 
         return result
-
-
-def includeme(config):
-    config.add_renderer(name='.html', factory=MakoRenderer)
-    config.add_renderer(name='.txt', factory=MakoRenderer)

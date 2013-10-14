@@ -3,11 +3,13 @@ import inspect
 
 from pyramid.decorator import reify
 
-from .lookup import SuperTemplateLookup
+from .templating.lookup import SuperTemplateLookup
+from .templating.renderer import MakoRenderer
 
 
 class Theme(object):
     template_dir = 'templates'
+    static_dir = 'static'
 
     def includeme(self, config):
         pass
@@ -33,15 +35,21 @@ class Theme(object):
         return els
 
     @reify
+    def template_dirs(self):
+        return self.__class__.collect_attributes('template_dir',
+                                                 qualify_paths=True)
+
+    @reify
     def lookup(self):
-        directories = self.__class__.collect_attributes('template_dir',
-                                                        qualify_paths=True)
-        return SuperTemplateLookup(directories=directories,
+        return SuperTemplateLookup(directories=self.template_dirs,
                                    input_encoding='utf-8',
                                    output_encoding='utf-8')
 
 
 def add_theme(config, key, cls):
+    """
+    Initialize and register a theme for use.
+    """
     settings = config.registry.settings
     themes = settings.setdefault('pyramid_frontend.theme_registry', {})
     themes[key] = theme = cls()
@@ -70,3 +78,6 @@ def includeme(config):
     config.add_directive('add_theme', add_theme)
     config.add_directive('set_theme_strategy', set_theme_strategy)
     config.add_request_method(theme, 'theme', reify=True)
+
+    config.add_renderer(name='.html', factory=MakoRenderer)
+    config.add_renderer(name='.txt', factory=MakoRenderer)

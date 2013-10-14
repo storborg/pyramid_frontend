@@ -30,9 +30,7 @@ class MakoRenderer(object):
 
         """
         # Avoid conflict between Pyramid and Mako ``context``s
-        context = system.pop('context', None)
-        if context is not None:
-            system['_context'] = context
+        system['_context'] = system.pop('context', None)
 
         try:
             system.update(value)

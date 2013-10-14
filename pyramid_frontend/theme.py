@@ -1,14 +1,53 @@
-#from .lookup import SuperTemplateLookup
+import os.path
+import inspect
+
+from pyramid.decorator import reify
+
+from .lookup import SuperTemplateLookup
 
 
 class Theme(object):
-    pass
+    template_dir = 'templates'
+
+    def __init__(self, system):
+        self.registry = system['registry']
+
+    def includeme(self, config):
+        pass
+
+    @classmethod
+    def qualify_path(cls, path):
+        return os.path.join(os.path.dirname(inspect.getfile(cls)), path)
+
+    @classmethod
+    def collect_attributes(cls, name, qualify_paths):
+        assert len(cls.__bases__) == 1, \
+            "multiple inheritance not allowed for themes"
+        superclass = cls.__bases__[0]
+        if superclass == object:
+            els = []
+        else:
+            els = superclass.collect_attributes(name)
+        if hasattr(cls, name):
+            el = getattr(cls, name)
+            if qualify_paths:
+                el = cls.qualify_path(el)
+            els.insert(0, el)
+        return els
+
+    @reify
+    def lookup(self):
+        directories = self.__class__.collect_attributes('template_dir')
+        return SuperTemplateLookup(directories=directories,
+                                   input_encoding='utf-8',
+                                   output_encoding='utf-8')
 
 
-def add_theme(config, key, theme):
+def add_theme(config, key, cls):
     settings = config.registry.settings
     themes = settings.setdefault('pyramid_frontend.theme_registry', {})
-    themes[key] = theme
+    themes[key] = theme = cls(dict(registry=config.registry))
+    theme.includeme(config)
     # XXX Update global image filter registry as well, and ensure there are no
     # conflicts.
 
@@ -22,8 +61,11 @@ def theme(self):
     settings = self.registry.settings
     strategy = settings.get('pyramid_frontend.theme_strategy')
     if strategy:
-        return strategy(self)
-    return settings['pyramid_frontend.theme']
+        key = strategy(self)
+    else:
+        key = settings['pyramid_frontend.theme']
+    themes = settings.setdefault('pyramid_frontend.theme_registry', {})
+    return themes[key]
 
 
 def includeme(config):

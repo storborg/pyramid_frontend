@@ -1,0 +1,25 @@
+from unittest import TestCase
+
+from webtest import TestApp
+from pyramid.mako_templating import MakoRenderingException
+
+from .app import make_app
+
+
+class TestFunctional(TestCase):
+    def setUp(self):
+        self.app = TestApp(make_app())
+
+    def test_render_index(self):
+        resp = self.app.get('/')
+        resp.mustcontain('base theme base.html')
+        resp.mustcontain('foo theme base.html')
+        resp.mustcontain('base theme index.html')
+
+    def test_render_bad_return(self):
+        with self.assertRaises(ValueError):
+            self.app.get('/bad-return')
+
+    def test_render_bad_template(self):
+        with self.assertRaises(MakoRenderingException):
+            self.app.get('/bad-template')

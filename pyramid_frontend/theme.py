@@ -9,9 +9,6 @@ from .lookup import SuperTemplateLookup
 class Theme(object):
     template_dir = 'templates'
 
-    def __init__(self, system):
-        self.registry = system['registry']
-
     def includeme(self, config):
         pass
 
@@ -27,7 +24,7 @@ class Theme(object):
         if superclass == object:
             els = []
         else:
-            els = superclass.collect_attributes(name)
+            els = superclass.collect_attributes(name, qualify_paths)
         if hasattr(cls, name):
             el = getattr(cls, name)
             if qualify_paths:
@@ -37,7 +34,8 @@ class Theme(object):
 
     @reify
     def lookup(self):
-        directories = self.__class__.collect_attributes('template_dir')
+        directories = self.__class__.collect_attributes('template_dir',
+                                                        qualify_paths=True)
         return SuperTemplateLookup(directories=directories,
                                    input_encoding='utf-8',
                                    output_encoding='utf-8')
@@ -46,7 +44,7 @@ class Theme(object):
 def add_theme(config, key, cls):
     settings = config.registry.settings
     themes = settings.setdefault('pyramid_frontend.theme_registry', {})
-    themes[key] = theme = cls(dict(registry=config.registry))
+    themes[key] = theme = cls()
     theme.includeme(config)
     # XXX Update global image filter registry as well, and ensure there are no
     # conflicts.

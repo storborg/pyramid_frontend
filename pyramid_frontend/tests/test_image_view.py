@@ -9,7 +9,7 @@ from ..images.view import ImageView
 class TestImageView(TestCase):
 
     def test_view_notfound(self):
-        with testing.testConfig() as config:
+        with testing.testConfig():
             request = testing.DummyRequest()
             request.matchdict['prefix'] = 'aaaa'
             request.matchdict['name'] = 'nonexistent-image'

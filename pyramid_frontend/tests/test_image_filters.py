@@ -6,7 +6,7 @@ from unittest import TestCase
 
 from PIL import Image
 
-from ..images import utils, filters
+from ..images import filters
 
 samples_dir = pkg_resources.resource_filename('pyramid_frontend.tests', 'data')
 

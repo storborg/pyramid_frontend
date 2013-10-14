@@ -1,37 +1,8 @@
 from __future__ import absolute_import, print_function, division
 
 import math
-from cStringIO import StringIO
 
-from PIL import Image, ImageColor, ImageChops
-
-
-def check(image_file):
-    """
-    Given a file object, check to see if the contents is a valid image. If so,
-    return the file format. Otherwise, raise exceptions.
-    """
-    im = Image.open(image_file)
-    # Raises exceptions if the file is broken in any way.
-    im.verify()
-    return (im.format, im.mode)
-
-
-def possible_extensions(format):
-    """
-    For a given format (as returned by PIL) return a list of possible file
-    extensions that can be used with this format. The first extension in the
-    returned list is the preferred one.
-    """
-    return {'BMP': ['bmp'],
-            'GIF': ['gif'],
-            'JPEG': ['jpg', 'jpe', 'jpeg'],
-            'PPM': ['ppm', 'pbm'],
-            'PCX': ['pcx'],
-            'PNG': ['png'],
-            'PSD': ['psd'],
-            'TGA': ['tga'],
-            'TIFF': ['tif', 'tiff']}[format]
+from PIL import Image, ImageChops
 
 
 def flatten_alpha(im, background='white'):
@@ -40,21 +11,6 @@ def flatten_alpha(im, background='white'):
         ni = Image.new("RGB", im.size, background)
         ni.paste(im, im)
         im = ni
-    return im
-
-
-def flatten_paletted(im, background=255):
-    if 'transparency' in im.info:
-        try:
-            background_int = int(background)
-        except ValueError:
-            background_int = ImageColor.getcolor(background, 'L')
-        transparency = im.info['transparency']
-        x = transparency * 3
-        p = im.getpalette()
-        for x in range(x, x + 3):
-            p[x] = background_int
-        im.putpalette(p)
     return im
 
 
@@ -69,16 +25,6 @@ def pad_image(im, dimensions, mode=None, color=None):
     hoff = int((desired_h - h) / 2)
     new.paste(im, (woff, hoff))
     return new
-
-
-def crop_to_ratio(im, ar):
-    """
-    Crop an image to a given aspect ratio.  Rounds dimensions up.
-    """
-    im_ar = float(im.size[0]) / im.size[1]
-    w, h = (im.size[1] * ar, im.size[1]) if im_ar > ar else \
-           (im.size[0], im.size[0] / ar)
-    return im.crop((0, 0, int(math.ceil(w)), int(math.ceil(h))))
 
 
 def image_entropy(im):
@@ -154,22 +100,6 @@ def crop_entropy(im, dimensions):
         # AR already matches exactly, no need to crop.
         im.thumbnail((desired_w, desired_h), Image.ANTIALIAS)
         return im
-
-
-def placeholder(im, size=(1, 1)):
-    """
-    Return a StringIO buffer to act as a placeholder for the given ImageMeta.
-    If ImageMeta stored dimensions, this function would use them.
-    """
-    i = Image.new('RGB', size, 'white')
-    buf = StringIO()
-    i.save(buf, {
-        "jpg": "JPEG",
-        "tiff": "TIFF",
-        "tif": "TIFF",
-    }.get(im.original_ext.lower(), im.original_ext))
-    buf.seek(0)
-    return buf
 
 
 def colors_differ(a, b, tolerance):

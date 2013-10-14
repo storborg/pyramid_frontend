@@ -12,7 +12,7 @@ from cStringIO import StringIO
 
 from PIL import Image
 
-from .utils import (pad_image, flatten_alpha, flatten_paletted, crop_entropy,
+from .utils import (pad_image, flatten_alpha, crop_entropy,
                     is_white_background, is_larger, bounding_box)
 
 

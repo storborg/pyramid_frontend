@@ -92,12 +92,6 @@ The ``request`` object has a few added methods.
 When using in production, call ``pcompile production.ini`` to generate static assets, or call ``pyramid_frontend.compile(registry.settings)``.
 
 
-Templates
-=========
-
-Inside a template, you can refer to files with the prefix ``super:`` to make the filename resolve in the theme that is being inherited from.
-
-
 Theme Inheritance
 =================
 
@@ -107,12 +101,19 @@ Themes can stack on top of another theme by subclassing them.
 Templates
 ~~~~~~~~~
 
-An inheriting theme's templates will layer on top of the superclass theme's templates.
+An inheriting theme's templates will layer on top of the superclass theme's
+templates. The renderer will attempt to resolve templates to the child-most
+class first, then traverse up the inheritance chain.
+
+Inside a template, you can refer to files with the prefix ``super:`` to make
+the filename resolve in the theme that is being inherited from.
 
 Image Filters
 ~~~~~~~~~~~~~
 
-...
+An inheriting theme's image filters will layer on top of the superclass theme's
+image filters. If an image filter of the same name is specified, the child
+class will override the superclass.
 
 Assets
 ~~~~~~

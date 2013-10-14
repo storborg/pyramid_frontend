@@ -1,13 +1,15 @@
 from webhelpers.html.tags import HTML
 
+from .chain import FilterChain
 from .files import prefix_for_name, get_url_prefix, original_path
 from .view import ImageView
 
 
-def add_image_filter(config, filter_chain):
+def add_image_filter(config, *args, **kwargs):
     settings = config.registry.settings
     filter_registry = settings.setdefault(
         'pyramid_frontend.image_filter_registry', {})
+    filter_chain = FilterChain(*args, **kwargs)
     filter_registry[filter_chain.suffix] = filter_chain
 
 

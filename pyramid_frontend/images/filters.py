@@ -1,9 +1,9 @@
 """
 Classes for image filtering. Base classes for Filter stages, which can be
 chained indefinitely. Filters can take an arbitrary input and output, but by
-convention will tend to pass either PIL images or file-like objects. Returning
-None from a filter at any point will cause the chain to be abandoned.
+convention will tend to pass either PIL images or file-like objects.
 """
+
 import shutil
 import tempfile
 import subprocess
@@ -20,6 +20,8 @@ class Filter(object):
     """
     Filter stage superclass. Instances are called with some input data and
     produce some output data. Has some useful methods for processing.
+
+    Filter instances are called on input data and return output data.
     """
 
     def adapt_input(self, input):
@@ -28,6 +30,8 @@ class Filter(object):
         """
         if hasattr(input, 'getpixel'):
             im = input
+            assert im.mode != 'CMYK', \
+                "CMYK-mode Image instance can't be passed directly to filter"
         else:
             input.seek(0)
             im = Image.open(input)
@@ -44,6 +48,9 @@ class Filter(object):
         return self.filter(self.adapt_input(input))
 
     def shell_process(self, input, args, inplace=False):
+        """
+        Process an image file (on the filesystem) using a shell command.
+        """
         input.seek(0)
         temp = tempfile.NamedTemporaryFile()
         shutil.copyfileobj(input, temp)
@@ -76,14 +83,11 @@ class ThumbFilter(Filter):
     A filter that resizes to a given size, using various mechanisms for
     changing size.
     """
-    def __init__(self, dimensions, pad=False, pad_width=False,
-                 pad_height=False, crop=False, crop_whitespace=False,
-                 background='white', enlarge=False):
+    def __init__(self, dimensions, pad=False, crop=False,
+                 crop_whitespace=False, background='white', enlarge=False):
 
         self.dimensions = dimensions
         self.pad = pad
-        self.pad_width = pad_width
-        self.pad_height = pad_height
         self.crop = crop
         self.crop_whitespace = crop_whitespace
         self.background = background
@@ -91,8 +95,7 @@ class ThumbFilter(Filter):
 
     def filter(self, im):
         def _pad_dim(src, dst, flag):
-            if not isinstance(flag, bool):
-                return int(flag)
+            assert isinstance(flag, bool)
             return (dst if flag else src)
 
         im = flatten_alpha(im, self.background)
@@ -128,11 +131,9 @@ class ThumbFilter(Filter):
             desired_h = desired_w / aspect
 
         im.thumbnail((desired_w, desired_h), Image.ANTIALIAS)
-        if self.pad or self.pad_height or self.pad_width:
-            w = _pad_dim(im.size[0], self.dimensions[0],
-                         self.pad or self.pad_width)
-            h = _pad_dim(im.size[1], self.dimensions[1],
-                         self.pad or self.pad_height)
+        if self.pad:
+            w = _pad_dim(im.size[0], self.dimensions[0], self.pad)
+            h = _pad_dim(im.size[1], self.dimensions[1], self.pad)
             im = pad_image(im, (w, h))
         return im
 
@@ -142,15 +143,11 @@ class VignetteFilter(Filter):
     A filter which vignettes corners a bit, to make a white background image
     stand out a bit against a white page background.
     """
-    def __init__(self, falloff=4, extent=40, white_background_only=False):
+    def __init__(self, falloff=4, extent=40):
         self.falloff = falloff
         self.extent = extent
-        self.white_background_only = white_background_only
 
     def filter(self, im):
-        if self.white_background_only and not is_white_background(im):
-            return im
-
         falloff = self.falloff
         extent = self.extent
 

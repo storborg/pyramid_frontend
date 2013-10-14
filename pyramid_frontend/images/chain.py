@@ -23,8 +23,7 @@ class FilterChain(object):
 
     def __init__(self, suffix, filters=(), extension='png',
                  width=None, height=None, no_thumb=False,
-                 pad=False, pad_width=False, pad_height=False,
-                 crop=False, crop_whitespace=False,
+                 pad=False, crop=False, crop_whitespace=False,
                  background='white', enlarge=False,
                  **saver_kwargs):
 
@@ -42,8 +41,7 @@ class FilterChain(object):
         if not no_thumb:
             self.filters.append(ThumbFilter(
                 (width, height),
-                pad=pad, pad_width=pad_width, pad_height=pad_height,
-                crop=crop, crop_whitespace=crop_whitespace,
+                pad=pad, crop=crop, crop_whitespace=crop_whitespace,
                 background=background, enlarge=enlarge))
 
         saver_class = savers[self.extension]

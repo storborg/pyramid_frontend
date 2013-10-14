@@ -1,7 +1,7 @@
 from webhelpers.html.tags import HTML
 
 from .files import prefix_for_name, get_url_prefix, original_path
-from .views import ImageView
+from .view import ImageView
 
 
 def add_image_filter(config, filter_chain):

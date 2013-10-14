@@ -11,7 +11,8 @@ from .files import filter_sep, prefix_for_name, processed_path, original_path
 
 def get_image_filter(registry, filter_key):
     settings = registry.settings
-    filter_registry = settings['pyramid_frontend.image_filter_registry']
+    filter_registry = settings.get('pyramid_frontend.image_filter_registry',
+                                   {})
     return filter_registry[filter_key]
 
 

@@ -12,6 +12,8 @@ class Theme(object):
     static_dir = 'static'
     assets = {}
     image_filters = []
+    require_config_path = '/_pfe/require_config.js'
+    require_path = '/_pfe/require.js'
 
     def includeme(self, config):
         pass
@@ -50,7 +52,7 @@ class Theme(object):
     def stacked_image_filters(self):
         filters = {}
         collected = self.__class__.traverse_attributes('image_filters')
-        for key, class_list in collected:
+        for key, class_list in reversed(list(collected)):
             class_dict = {chain.suffix: chain for chain in class_list}
             filters.update(class_dict)
         return filters.values()
@@ -58,7 +60,8 @@ class Theme(object):
     @reify
     def stacked_assets(self):
         assets = {}
-        for key, class_dict in self.__class__.traverse_attributes('assets'):
+        collected = self.__class__.traverse_attributes('assets')
+        for key, class_dict in reversed(list(collected)):
             assets.update(class_dict)
         return assets
 

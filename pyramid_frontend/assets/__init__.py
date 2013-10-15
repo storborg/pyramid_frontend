@@ -15,29 +15,27 @@ js_preamble = '''\
 '''
 
 
-def requirejs_tag_development(url):
+def requirejs_tag_development(url, theme):
     return ''.join([
-        js_premable,
-        '<script src="/_pfe/require_config.js"></script>\n',
-        '<script src="/_pfe/require.js"></script>\n',
-        '<script src="',
-        url,
-        '"></script>',
+        js_preamble,
+        '<script src="%s"></script>\n' % theme.require_config_path,
+        '<script src="%s"></script>\n' % theme.require_path,
+        '<script src="%s"></script>\n' % url,
     ])
 
 
-def requirejs_tag_production(url):
+def requirejs_tag_production(url, theme):
     return ''.join(['<script src="', url, '"></script>'])
 
 
-def less_tag_development(url):
+def less_tag_development(url, theme):
     return ''.join([
         HTML.link(rel='stylesheet/less', type='text/css', href=url),
         '<script src="/_pfe/less.js"></script>',
     ])
 
 
-def less_tag_production(url):
+def less_tag_production(url, theme):
     return ''.join([
         HTML.link(rel='stylesheet', type='text/css', href=url),
     ])
@@ -52,11 +50,14 @@ tag_map = {
 
 
 def asset_tag(request, key, **kwargs):
-    assets = request.theme.stacked_assets
+    theme = request.theme
+    assets = theme.stacked_assets
     url_path, asset_type = assets[key]
-    should_compile = settings.get('pyramid_frontend.compile_%s' % asset_type)
+    settings = request.registry.settings
+    should_compile = bool(settings.get('pyramid_frontend.compile_%s' %
+                                       asset_type))
     tag_func = tag_map[(asset_type, should_compile)]
-    return tag_func(url_path)
+    return tag_func(url_path, theme)
 
 
 def includeme(config):

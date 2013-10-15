@@ -10,6 +10,8 @@ from .templating.renderer import MakoRenderer
 class Theme(object):
     template_dir = 'templates'
     static_dir = 'static'
+    assets = {}
+    image_filters = {}
 
     def includeme(self, config):
         pass
@@ -19,25 +21,24 @@ class Theme(object):
         return os.path.join(os.path.dirname(inspect.getfile(cls)), path)
 
     @classmethod
-    def collect_attributes(cls, name, qualify_paths):
+    def traverse_attributes(cls, name, qualify_paths):
         assert len(cls.__bases__) == 1, \
             "multiple inheritance not allowed for themes"
-        superclass = cls.__bases__[0]
-        if superclass == object:
-            els = []
-        else:
-            els = superclass.collect_attributes(name, qualify_paths)
-        if hasattr(cls, name):
-            el = getattr(cls, name)
-            if qualify_paths:
-                el = cls.qualify_path(el)
-            els.insert(0, el)
-        return els
+        while cls != Theme:
+            if hasattr(cls, name):
+                el = getattr(cls, name)
+                if qualify_paths:
+                    el = cls.qualify_path(el)
+                yield cls.key, el
+            cls = cls.__bases__[0]
 
     @reify
     def template_dirs(self):
-        return self.__class__.collect_attributes('template_dir',
-                                                 qualify_paths=True)
+        dirs = []
+        for key, dir in self.__class__.traverse_attributes('template_dir',
+                qualify_paths=True):
+            dirs.append(dir)
+        return dirs
 
     @reify
     def lookup(self):
@@ -45,15 +46,38 @@ class Theme(object):
                                    input_encoding='utf-8',
                                    output_encoding='utf-8')
 
+    @reify
+    def stacked_image_filters(self):
+        filters = {}
+        for key, class_dict in self.__class__.traverse_attributes('image_filters'):
+            filters.update(class_dict)
+        return filters
 
-def add_theme(config, key, cls):
+    @reify
+    def stacked_assets(self):
+        assets = {}
+        for key, class_dict in self.__class__.traverse_attributes('assets'):
+            assets.update(class_dict)
+        return assets
+
+    @reify
+    def static_dirs(self):
+        return self.__class__.traverse_attributes('static_dir',
+                                                  qualify_paths=True)
+
+
+def add_theme(config, cls):
     """
     Initialize and register a theme for use.
     """
     settings = config.registry.settings
     themes = settings.setdefault('pyramid_frontend.theme_registry', {})
-    themes[key] = theme = cls()
+    theme = cls()
+    themes[theme.key] = theme
     theme.includeme(config)
+
+    # XXX Register static dirs.
+
     # XXX Update global image filter registry as well, and ensure there are no
     # conflicts.
 

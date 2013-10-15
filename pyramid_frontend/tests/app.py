@@ -66,9 +66,9 @@ def make_app():
 
     config.add_image_filter('thumb', width=200, height=200, crop=True)
 
-    config.add_theme('base', base.BaseTheme)
-    config.add_theme('foo', foo.FooTheme)
-    config.add_theme('bar', bar.BarTheme)
+    config.add_theme(base.BaseTheme)
+    config.add_theme(foo.FooTheme)
+    config.add_theme(bar.BarTheme)
 
     config.add_route('index', '/')
     config.add_route('article', '/article')

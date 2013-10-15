@@ -31,7 +31,7 @@ def requirejs_tag_production(url, theme):
 def less_tag_development(url, theme):
     return ''.join([
         HTML.link(rel='stylesheet/less', type='text/css', href=url),
-        '<script src="/_pfe/less.js"></script>',
+        '<script src="%s"></script>' % theme.less_path,
     ])
 
 

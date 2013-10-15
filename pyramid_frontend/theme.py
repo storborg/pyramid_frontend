@@ -14,6 +14,7 @@ class Theme(object):
     image_filters = []
     require_config_path = '/_pfe/require_config.js'
     require_path = '/_pfe/require.js'
+    less_path = '/_pfe/less.js'
 
     def includeme(self, config):
         pass

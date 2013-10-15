@@ -8,6 +8,7 @@ from pyramid.config import Configurator
 
 from pyramid_frontend.tests.example import base, foo, bar
 from pyramid_frontend.images.files import save_image
+from pyramid_frontend.images.chain import FilterChain
 
 
 samples_dir = pkg_resources.resource_filename('pyramid_frontend.tests', 'data')
@@ -64,7 +65,8 @@ def make_app():
 
     config.include('pyramid_frontend')
 
-    config.add_image_filter('thumb', width=200, height=200, crop=True)
+    config.add_image_filter(FilterChain('thumb', width=200, height=200,
+                                        crop=True))
 
     config.add_theme(base.BaseTheme)
     config.add_theme(foo.FooTheme)

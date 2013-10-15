@@ -5,17 +5,15 @@ from .files import prefix_for_name, get_url_prefix, original_path
 from .view import ImageView
 
 
-def add_image_filter(config, suffix, chain=None, with_theme=None, **kwargs):
-    print "Registering %r - %r - with theme %r" % (suffix, chain, with_theme)
+def add_image_filter(config, chain, with_theme=None):
     settings = config.registry.settings
     filter_registry = settings.setdefault(
         'pyramid_frontend.image_filter_registry', {})
-    chain = chain or FilterChain(suffix, **kwargs)
-    if suffix in filter_registry:
-        registered_chain, with_theme = filter_registry[suffix]
+    if chain.suffix in filter_registry:
+        registered_chain, with_theme = filter_registry[chain.suffix]
         assert registered_chain == chain, \
-            "suffix %r is already registered with a different instance" % suffix
-    filter_registry[suffix] = (chain, with_theme)
+            "suffix %r already registered with different instance" % chain.suffix
+    filter_registry[chain.suffix] = (chain, with_theme)
 
 
 def image_url(request, name, original_ext, filter_key):

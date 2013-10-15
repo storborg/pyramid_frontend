@@ -11,7 +11,7 @@ class Theme(object):
     template_dir = 'templates'
     static_dir = 'static'
     assets = {}
-    image_filters = {}
+    image_filters = []
 
     def includeme(self, config):
         pass
@@ -49,9 +49,10 @@ class Theme(object):
     @reify
     def stacked_image_filters(self):
         filters = {}
-        for key, class_dict in self.__class__.traverse_attributes('image_filters'):
+        for key, class_list in self.__class__.traverse_attributes('image_filters'):
+            class_dict = {chain.suffix: chain for chain in class_list}
             filters.update(class_dict)
-        return filters
+        return filters.values()
 
     @reify
     def stacked_assets(self):
@@ -86,8 +87,8 @@ def add_theme(config, cls):
 
     # Update global image filter registry as well, and ensure there are no
     # conflicts.
-    for suffix, chain in theme.stacked_image_filters.iteritems():
-        config.add_image_filter(suffix, chain, with_theme=theme)
+    for chain in theme.stacked_image_filters:
+        config.add_image_filter(chain, with_theme=theme)
 
 
 def set_theme_strategy(config, strategy_func):

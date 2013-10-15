@@ -21,7 +21,7 @@ class Theme(object):
         return os.path.join(os.path.dirname(inspect.getfile(cls)), path)
 
     @classmethod
-    def traverse_attributes(cls, name, qualify_paths):
+    def traverse_attributes(cls, name, qualify_paths=False):
         assert len(cls.__bases__) == 1, \
             "multiple inheritance not allowed for themes"
         while cls != Theme:
@@ -61,7 +61,7 @@ class Theme(object):
         return assets
 
     @reify
-    def static_dirs(self):
+    def keyed_static_dirs(self):
         return self.__class__.traverse_attributes('static_dir',
                                                   qualify_paths=True)
 
@@ -76,10 +76,18 @@ def add_theme(config, cls):
     themes[theme.key] = theme
     theme.includeme(config)
 
-    # XXX Register static dirs.
+    # Register static dirs.
+    static_dirs = settings.setdefault('pyramid_frontend.static_registry',
+                                      set())
+    for key, dir in theme.keyed_static_dirs:
+        if (key, dir) not in static_dirs:
+            static_dirs.add((key, dir))
+            config.add_static_view('_%s' % key, path=dir)
 
-    # XXX Update global image filter registry as well, and ensure there are no
+    # Update global image filter registry as well, and ensure there are no
     # conflicts.
+    for suffix, chain in theme.stacked_image_filters.iteritems():
+        config.add_image_filter(suffix, chain, with_theme=theme)
 
 
 def set_theme_strategy(config, strategy_func):

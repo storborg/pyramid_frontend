@@ -5,12 +5,17 @@ from .files import prefix_for_name, get_url_prefix, original_path
 from .view import ImageView
 
 
-def add_image_filter(config, *args, **kwargs):
+def add_image_filter(config, suffix, chain=None, with_theme=None, **kwargs):
+    print "Registering %r - %r - with theme %r" % (suffix, chain, with_theme)
     settings = config.registry.settings
     filter_registry = settings.setdefault(
         'pyramid_frontend.image_filter_registry', {})
-    filter_chain = FilterChain(*args, **kwargs)
-    filter_registry[filter_chain.suffix] = filter_chain
+    chain = chain or FilterChain(suffix, **kwargs)
+    if suffix in filter_registry:
+        registered_chain, with_theme = filter_registry[suffix]
+        assert registered_chain == chain, \
+            "suffix %r is already registered with a different instance" % suffix
+    filter_registry[suffix] = (chain, with_theme)
 
 
 def image_url(request, name, original_ext, filter_key):
@@ -22,7 +27,7 @@ def image_url(request, name, original_ext, filter_key):
     # supplied filter_key is ref'd within the theme: if not, fail with a
     # descriptive exception.
 
-    chain = filter_registry[filter_key]
+    chain, with_theme = filter_registry[filter_key]
 
     return '/'.join([url_prefix,
                      prefix_for_name(name),
@@ -32,10 +37,10 @@ def image_url(request, name, original_ext, filter_key):
 def image_tag(request, name, original_ext, filter_key, **kwargs):
     settings = request.registry.settings
     filter_registry = settings['pyramid_frontend.image_filter_registry']
-    filter_chain = filter_registry[filter_key]
+    chain, with_theme = filter_registry[filter_key]
 
-    kwargs.setdefault('width', filter_chain.width)
-    kwargs.setdefault('height', filter_chain.height)
+    kwargs.setdefault('width', chain.width)
+    kwargs.setdefault('height', chain.height)
 
     return HTML.img(src=request.image_url(name, original_ext, filter_key),
                     **kwargs)

@@ -1,11 +1,10 @@
 from unittest import TestCase
 
-from pyramid import testing
 from mako.exceptions import TopLevelLookupException
 
 from ..templating.lookup import SuperTemplateLookup
 
-from .example import base, foo, bar
+from .example import base, foo
 
 
 class TestThemeLookup(TestCase):
@@ -39,4 +38,12 @@ class TestThemeLookup(TestCase):
     def test_render_missing_template(self):
         theme = foo.FooTheme()
         with self.assertRaises(TopLevelLookupException):
-            templ = theme.lookup.get_template('nonexistent-template.html')
+            theme.lookup.get_template('nonexistent-template.html')
+
+
+class TestLookupOptions(TestCase):
+    def test_filesystem_checks(self):
+        # XXX Fill this in
+        dirs = []
+        SuperTemplateLookup(directories=dirs,
+                            filesystem_checks=True)

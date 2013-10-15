@@ -35,8 +35,8 @@ class Theme(object):
     @reify
     def template_dirs(self):
         dirs = []
-        for key, dir in self.__class__.traverse_attributes('template_dir',
-                qualify_paths=True):
+        for key, dir in self.__class__.traverse_attributes(
+                'template_dir', qualify_paths=True):
             dirs.append(dir)
         return dirs
 
@@ -49,7 +49,8 @@ class Theme(object):
     @reify
     def stacked_image_filters(self):
         filters = {}
-        for key, class_list in self.__class__.traverse_attributes('image_filters'):
+        collected = self.__class__.traverse_attributes('image_filters')
+        for key, class_list in collected:
             class_dict = {chain.suffix: chain for chain in class_list}
             filters.update(class_dict)
         return filters.values()

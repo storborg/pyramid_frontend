@@ -7,4 +7,3 @@ class BarTheme(BaseTheme):
     image_filters = [
         FilterChain('full', width=400, height=400, crop=True),
     ]
-

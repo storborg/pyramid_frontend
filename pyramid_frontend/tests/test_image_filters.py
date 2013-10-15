@@ -227,12 +227,6 @@ class TestFilters(TestCase):
         self.assertEqual(im.size, (1000, 1000))
 
     def test_thumb_filter_unspecified_dims(self):
-        filter = filters.ThumbFilter((None, 200))
-        im = Image.open(os.path.join(samples_dir, 'smiley-jpeg-rgb.jpg'))
-        im = filter(im)
-        self.assertEqual(im.size, (200, 200))
-
-    def test_thumb_filter_unspecified_dims(self):
         filter = filters.ThumbFilter((None, None), crop_whitespace=True)
         im = Image.open(os.path.join(samples_dir, 'smiley-jpeg-rgb.jpg'))
         im = filter(im)

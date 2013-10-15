@@ -1,6 +1,5 @@
 from webhelpers.html.tags import HTML
 
-from .chain import FilterChain
 from .files import prefix_for_name, get_url_prefix, original_path
 from .view import ImageView
 
@@ -12,7 +11,8 @@ def add_image_filter(config, chain, with_theme=None):
     if chain.suffix in filter_registry:
         registered_chain, with_theme = filter_registry[chain.suffix]
         assert registered_chain == chain, \
-            "suffix %r already registered with different instance" % chain.suffix
+            ("suffix %r already registered with different instance" %
+             chain.suffix)
     filter_registry[chain.suffix] = (chain, with_theme)
 
 

@@ -9,11 +9,6 @@ from pyramid_frontend.assets.requirejs import RequireJSCompiler
 from pyramid_frontend.assets.less import LessCompiler
 
 
-def main(argv=sys.argv, quiet=False):
-    command = PCompileCommand(argv, quiet)
-    return command.run()
-
-
 def compile_theme(settings, theme):
     print "Compiling theme: %s" % theme.key
     output_dir = os.path.join(
@@ -27,31 +22,26 @@ def compile_theme(settings, theme):
         compilers[asset_type].compile(key, entry_point)
 
 
-class PCompileCommand(object):
+def compile(registry):
+    settings = registry.settings
+    theme_registry = settings['pyramid_frontend.theme_registry']
+    for theme in theme_registry.itervalues():
+        compile_theme(settings, theme)
+
+
+def main(argv=sys.argv, quiet=False):
     parser = optparse.OptionParser(
         '%prog config_uri',
         description='Compile static assets.',
     )
 
-    stdout = sys.stdout
-    bootstrap = (bootstrap,)  # testing
+    options, args = parser.parse_args(argv[1:])
 
-    def __init__(self, argv, quiet=False):
-        self.quiet = quiet
-        self.options, self.args = self.parser.parse_args(argv[1:])
-
-    def compile(self, registry):
-        settings = registry.settings
-        theme_registry = settings['pyramid_frontend.theme_registry']
-        for theme in theme_registry.itervalues():
-            compile_theme(settings, theme)
-
-    def run(self):
-        if not self.args:
-            self.out('Requires a config file argument')
-            return 2
-        config_uri = self.args[0]
-        env = self.bootstrap[0](config_uri, options=parse_vars(self.args[1:]))
-        registry = env['registry']
-        self.compile(registry)
-        return 0
+    if not args:
+        print "Requires a config file argument"
+        return 2
+    config_uri = args[0]
+    env = bootstrap(config_uri, options=parse_vars(args[1:]))
+    registry = env['registry']
+    compile(registry)
+    return 0

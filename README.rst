@@ -90,8 +90,6 @@ The ``request`` object has a few added methods.
 * ``request.asset_tag(key)`` - Generate an asset tag (either a script tag or
   stylesheet tag, or some combination thereof) for a corresponding asset key.
   In production, this will point to a concatenated / minified file.
-* ``request.asset_url(path)`` - Generate an asset URL for a corresponding
-  static file.
 
 * ``request.image_url(name, original_ext, filter_key)`` - Generate a URL for an
   image as processed by the specified filter chain.

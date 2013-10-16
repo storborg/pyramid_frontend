@@ -3,6 +3,7 @@ import inspect
 import pkg_resources
 
 from pyramid.decorator import reify
+from pyramid.path import DottedNameResolver, caller_package
 
 from .templating.lookup import SuperTemplateLookup
 from .templating.renderer import MakoRenderer
@@ -109,6 +110,10 @@ def add_theme(config, cls):
     """
     Initialize and register a theme for use.
     """
+    package = caller_package(level=3)
+    resolver = DottedNameResolver(package=package)
+    cls = resolver.maybe_resolve(cls)
+
     settings = config.registry.settings
     themes = settings.setdefault('pyramid_frontend.theme_registry', {})
     theme = cls(settings)

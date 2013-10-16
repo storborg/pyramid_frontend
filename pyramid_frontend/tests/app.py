@@ -60,6 +60,7 @@ def make_app():
         'pyramid_frontend.theme': 'foo',
         'pyramid_frontend.original_image_dir': '/tmp/pfe-image-originals',
         'pyramid_frontend.processed_image_dir': '/tmp/pfe-image-processed',
+        'pyramid_frontend.compiled_asset_dir': '/tmp/pfe-compiled'
     }
     config = Configurator(settings=settings)
 

@@ -1,10 +1,13 @@
 import os.path
 import inspect
+import pkg_resources
 
 from pyramid.decorator import reify
 
 from .templating.lookup import SuperTemplateLookup
 from .templating.renderer import MakoRenderer
+
+static_dir = pkg_resources.resource_filename('pyramid_frontend', 'static')
 
 
 class Theme(object):
@@ -15,6 +18,10 @@ class Theme(object):
     require_config_path = '/_pfe/require_config.js'
     require_path = '/_pfe/require.js'
     less_path = '/_pfe/less.js'
+
+    def __init__(self, settings):
+        self.settings = settings
+        self._compiled_asset_cache = {}
 
     def includeme(self, config):
         pass
@@ -68,8 +75,34 @@ class Theme(object):
 
     @reify
     def keyed_static_dirs(self):
-        return self.__class__.traverse_attributes('static_dir',
-                                                  qualify_paths=True)
+        cls = self.__class__
+        stack = list(cls.traverse_attributes('static_dir', qualify_paths=True))
+        stack.append(('pfe', static_dir))
+        return stack
+
+    def compiled_asset_path(self, key):
+        if key in self._compiled_asset_cache:
+            return self._compiled_asset_cache[key]
+        else:
+            map_path = os.path.join(
+                self.settings['pyramid_frontend.compiled_asset_dir'],
+                self.key,
+                '%s.map' % key)
+            with open(map_path) as f:
+                self._compiled_asset_cache[key] = compiled_path = f.read()
+                return compiled_path
+
+    def static_url_to_filesystem_path(self, url):
+        """
+        Given a URL of the structure /_<theme key>/<path>, locate the static
+        dir which corresponds to the theme key and re-qualify the <path> to
+        that directory.
+        """
+        assert url.startswith('/_')
+        theme_key, path = url[2:].split('/', 1)
+        theme_dirs = dict(self.keyed_static_dirs)
+        base_dir = theme_dirs[theme_key]
+        return os.path.join(base_dir, path)
 
 
 def add_theme(config, cls):
@@ -78,7 +111,7 @@ def add_theme(config, cls):
     """
     settings = config.registry.settings
     themes = settings.setdefault('pyramid_frontend.theme_registry', {})
-    theme = cls()
+    theme = cls(settings)
     themes[theme.key] = theme
     theme.includeme(config)
 

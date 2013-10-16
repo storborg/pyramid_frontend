@@ -36,4 +36,8 @@ setup(name='pyramid_frontend',
       test_suite='nose.collector',
       tests_require=['nose'],
       include_package_data=True,
-      zip_safe=False)
+      zip_safe=False,
+      entry_points="""\
+      [console_scripts]
+      pcompile = pyramid_frontend.compile:main
+      """)

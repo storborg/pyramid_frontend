@@ -18,27 +18,25 @@ js_preamble = '''\
 def requirejs_tag_development(url, theme):
     return ''.join([
         js_preamble,
-        '<script src="%s"></script>\n' % theme.require_config_path,
-        '<script src="%s"></script>\n' % theme.require_path,
-        '<script src="%s"></script>\n' % url,
+        HTML.script(src=theme.require_config_path),
+        HTML.script(src=theme.require_path),
+        HTML.script(src=url),
     ])
 
 
 def requirejs_tag_production(url, theme):
-    return ''.join(['<script src="', url, '"></script>'])
+    return HTML.script(src=url)
 
 
 def less_tag_development(url, theme):
     return ''.join([
         HTML.link(rel='stylesheet/less', type='text/css', href=url),
-        '<script src="%s"></script>' % theme.less_path,
+        HTML.script(src=theme.less_path),
     ])
 
 
 def less_tag_production(url, theme):
-    return ''.join([
-        HTML.link(rel='stylesheet', type='text/css', href=url),
-    ])
+    return HTML.link(rel='stylesheet', type='text/css', href=url)
 
 
 tag_map = {
@@ -57,10 +55,20 @@ def asset_tag(request, key, **kwargs):
     should_compile = bool(settings.get('pyramid_frontend.compile_%s' %
                                        asset_type))
     tag_func = tag_map[(asset_type, should_compile)]
+    if should_compile:
+        filename = theme.compiled_asset_path(key)
+        url_path = '/compiled/' + theme.key + '/' + filename
     return tag_func(url_path, theme)
 
 
 def includeme(config):
     config.add_request_method(asset_tag, 'asset_tag')
+
     path = pkg_resources.resource_filename('pyramid_frontend', 'static')
     config.add_static_view(name='_pfe', path=path)
+
+    compiled_path = \
+        config.registry.settings['pyramid_frontend.compiled_asset_dir']
+    compiled_path = '/Users/scott/gallery/compiled/'
+    print "Compiled_path is %r" % compiled_path
+    config.add_static_view(name='compiled', path=compiled_path)

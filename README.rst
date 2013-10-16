@@ -43,8 +43,12 @@ Configure the following settings:
 
 * ``pyramid_frontend.use_compiled``
 
-Register at least one theme, using the ``config.add_theme(theme_key, theme)``
-directive. (Possibly a setuptools entry point, later.)
+Register at least one theme, using the ``config.add_theme(theme)`` directive.
+You can also pass a dotted string (e.g. ``myapp.themes.foo.FooTheme``) which
+will be resolved relative to the calling module.
+
+Other possible mechanisms for theme registration which may be added later are a
+setuptools entrypoint or a settings key.
 
 * Themes are subclasses of the ``pyramid_frontend.Theme`` class.
 * Class attributes or properties can be set for resource configuration.
@@ -138,7 +142,8 @@ child class will override the superclass.
 Static Files
 ------------
 
-Each theme has exactly one static file directory.
+Each theme has exactly one static file directory. It will be served up at an
+underscore-prefixed path corresponding to the theme's key.
 
 
 Asset Compilation
@@ -156,7 +161,8 @@ the following:
   - Resolve the entry point path to a filesystem path.
   - Collect static dirs from the theme and superclasses for use in resolving
     references during the compilation process.
-  - Compile the asset by calling a ``Compiler`` instance with the theme and the asset entry point.
+  - Compile the asset by calling a ``Compiler`` instance with the theme and the
+    asset entry point.
   - Save the result to a file in ``pyramid_frontend.compiled_asset_dir`` with a
     filename based on the sha1 of the contents.  - Collect all filenames for
     compiled files, mapping entry point name to filename.

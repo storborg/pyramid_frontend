@@ -6,6 +6,8 @@ from setuptools import setup
 #   pngcrush
 #   optipng
 #   convert (from GraphicsMagick or ImageMagick)
+#   lessc
+#   r.js
 
 setup(name='pyramid_frontend',
       version='0.1',

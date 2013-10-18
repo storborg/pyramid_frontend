@@ -9,11 +9,13 @@ from PIL import Image
 
 from ..images.chain import FilterChain, PassThroughFilterChain
 
+from . import utils
+
 samples_dir = pkg_resources.resource_filename('pyramid_frontend.tests', 'data')
 
 
 class TestFilterChain(TestCase):
-    work_dir = '/tmp/pyramid_frontend_tests'
+    work_dir = os.path.join(utils.work_dir, 'filter-chain-tests')
     test_files = ['smiley-jpeg-rgb.jpg',
                   'smiley-png24-alpha.png',
                   'smiley-gif-alpha.gif',

@@ -6,12 +6,16 @@ from pyramid.mako_templating import MakoRenderingException
 
 from PIL import Image
 
-from .utils import make_app
+from . import utils
+
+
+def setup():
+    utils.load_images()
 
 
 class TestTemplatingFunctional(TestCase):
     def setUp(self):
-        self.app = TestApp(make_app())
+        self.app = TestApp(utils.make_app())
 
     def test_render_index(self):
         resp = self.app.get('/')
@@ -30,7 +34,7 @@ class TestTemplatingFunctional(TestCase):
 
 class TestImagesFunctional(TestCase):
     def setUp(self):
-        self.app = TestApp(make_app())
+        self.app = TestApp(utils.make_app())
 
     def test_fetch_image(self):
         url_resp = self.app.get('/image-url')

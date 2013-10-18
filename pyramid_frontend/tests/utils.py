@@ -38,19 +38,13 @@ def bad_template_view(request):
 
 
 def image_url_view(request):
-    load_images(request)
     return request.image_url('smiley-jpeg-rgb', 'jpg', 'thumb')
 
 
-def load_images(request):
+def load_images(settings=default_settings):
     """
     Load images from test 'samples' directory to originals dir.
     """
-    settings = request.registry.settings
-    if settings.get('images-loaded'):
-        return
-    settings['images-loaded'] = True
-
     originals = settings['pyramid_frontend.original_image_dir']
     processed = settings['pyramid_frontend.processed_image_dir']
     if os.path.exists(originals):

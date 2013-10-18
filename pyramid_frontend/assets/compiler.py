@@ -3,10 +3,10 @@ from __future__ import absolute_import, print_function, division
 import os
 import tempfile
 import time
+import subprocess
 
 from contextlib import contextmanager
 from hashlib import sha1
-from subprocess import check_call
 
 
 class Compiler(object):
@@ -19,7 +19,7 @@ class Compiler(object):
     def run_command(self, argv):
         print('Running command: {0} ...'.format(' '.join(argv)))
         start_time = time.time()
-        check_call(argv)
+        subprocess.check_output(argv, stderr=subprocess.STDOUT)
         elapsed_time = time.time() - start_time
         print('Command completed in {:.4f} seconds.'.format(elapsed_time))
 

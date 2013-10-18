@@ -6,7 +6,7 @@ from pyramid.mako_templating import MakoRenderingException
 
 from PIL import Image
 
-from .app import make_app
+from .utils import make_app
 
 
 class TestTemplatingFunctional(TestCase):

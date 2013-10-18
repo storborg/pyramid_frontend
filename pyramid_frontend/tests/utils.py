@@ -13,12 +13,15 @@ from pyramid_frontend.images.chain import FilterChain
 
 samples_dir = pkg_resources.resource_filename('pyramid_frontend.tests', 'data')
 
+work_dir = '/tmp/pfe-test-workdir'
+
 
 default_settings = {
     'pyramid_frontend.theme': 'foo',
-    'pyramid_frontend.original_image_dir': '/tmp/pfe-image-originals',
-    'pyramid_frontend.processed_image_dir': '/tmp/pfe-image-processed',
-    'pyramid_frontend.compiled_asset_dir': '/tmp/pfe-compiled'
+    'pyramid_frontend.original_image_dir': os.path.join(work_dir, 'originals'),
+    'pyramid_frontend.processed_image_dir': os.path.join(work_dir,
+                                                         'processed'),
+    'pyramid_frontend.compiled_asset_dir': os.path.join(work_dir, 'compiled'),
 }
 
 

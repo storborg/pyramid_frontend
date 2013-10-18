@@ -1,6 +1,7 @@
 import pkg_resources
 
 from webhelpers.html.tags import HTML
+from pyramid.settings import asbool
 
 
 js_preamble = '''\
@@ -52,8 +53,8 @@ def asset_tag(request, key, **kwargs):
     assets = theme.stacked_assets
     url_path, asset_type = assets[key]
     settings = request.registry.settings
-    should_compile = bool(settings.get('pyramid_frontend.compile_%s' %
-                                       asset_type))
+    should_compile = asbool(settings.get('pyramid_frontend.compile_%s' %
+                                         asset_type))
     tag_func = tag_map[(asset_type, should_compile)]
     if should_compile:
         filename = theme.compiled_asset_path(key)

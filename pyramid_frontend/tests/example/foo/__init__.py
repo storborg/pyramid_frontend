@@ -7,3 +7,6 @@ class FooTheme(BaseTheme):
     image_filters = [
         FilterChain('tiny', width=64, height=64, crop=True),
     ]
+    assets = {
+        'main-less': ('/_foo/css/main.less', 'less'),
+    }

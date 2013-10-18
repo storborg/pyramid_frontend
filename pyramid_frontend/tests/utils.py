@@ -92,6 +92,11 @@ def make_app(settings=None):
     return config.make_wsgi_app()
 
 
+def app_factory(global_config, **local_conf):
+    global_config.update(local_conf)
+    return make_app(global_config)
+
+
 if __name__ == '__main__':
     from wsgiref.simple_server import make_server
     app = make_app()

@@ -29,7 +29,7 @@ def compile(registry):
         compile_theme(settings, theme)
 
 
-def main(argv=sys.argv, quiet=False):
+def main(argv=sys.argv):
     parser = optparse.OptionParser(
         '%prog config_uri',
         description='Compile static assets.',

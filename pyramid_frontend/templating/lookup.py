@@ -13,6 +13,8 @@ class SuperTemplateLookup(TemplateLookup):
         for dir in self.directories:
             if os.path.commonprefix([filename, dir]) == dir:
                 return dir
+        raise ValueError("filename %r is not in any of this lookup's "
+                         "directories" % filename)
 
     def get_template(self, uri):
         try:

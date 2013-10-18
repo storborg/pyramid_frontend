@@ -44,10 +44,22 @@ class TestThemeLookup(TestCase):
         with self.assertRaises(TopLevelLookupException):
             theme.lookup.get_template('nonexistent-template.html')
 
+    def test_find_dir_for(self):
+        theme = foo.FooTheme(self.settings)
+        with self.assertRaises(ValueError):
+            theme.lookup.find_dir_for('/some/other/path.html')
+
 
 class TestLookupOptions(TestCase):
+    settings = {
+        'pyramid_frontend.compiled_asset_dir': '.'
+    }
+
     def test_filesystem_checks(self):
-        # XXX Fill this in
-        dirs = []
-        SuperTemplateLookup(directories=dirs,
-                            filesystem_checks=True)
+        theme = foo.FooTheme(self.settings)
+        dirs = theme.lookup.directories
+        lookup = SuperTemplateLookup(directories=dirs,
+                                     filesystem_checks=False)
+        templ = lookup.get_template('index.html')
+        s = templ.render()
+        self.assertIn('foo theme', s)

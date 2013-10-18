@@ -19,7 +19,11 @@ class Compiler(object):
     def run_command(self, argv):
         print('Running command: {0} ...'.format(' '.join(argv)))
         start_time = time.time()
-        subprocess.check_output(argv, stderr=subprocess.STDOUT)
+        try:
+            subprocess.check_output(argv, stderr=subprocess.STDOUT)
+        except subprocess.CalledProcessError as e:
+            print(e.output)
+            raise
         elapsed_time = time.time() - start_time
         print('Command completed in {:.4f} seconds.'.format(elapsed_time))
 

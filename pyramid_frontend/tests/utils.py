@@ -1,3 +1,4 @@
+import pkg_resources
 import os
 import os.path
 import glob
@@ -10,8 +11,13 @@ from pyramid_frontend.tests.example import base, foo, bar
 from pyramid_frontend.images.files import save_image
 from pyramid_frontend.images.chain import FilterChain
 
+from .. import compile
+
 
 samples_dir = pkg_resources.resource_filename('pyramid_frontend.tests', 'data')
+
+test_ini_path = pkg_resources.resource_filename('pyramid_frontend.tests',
+                                                'test.ini')
 
 work_dir = '/tmp/pfe-test-workdir'
 
@@ -39,6 +45,14 @@ def bad_template_view(request):
 
 def image_url_view(request):
     return request.image_url('smiley-jpeg-rgb', 'jpg', 'thumb')
+
+
+def js_tag_view(request):
+    return request.asset_tag('main-js')
+
+
+def css_tag_view(request):
+    return request.asset_tag('main-less')
 
 
 def load_images(settings=default_settings):
@@ -80,6 +94,8 @@ def make_app(settings=None):
     config.add_route('bad-return', '/bad-return')
     config.add_route('bad-template', '/bad-template')
     config.add_route('image-url', '/image-url')
+    config.add_route('js-tag', '/js-tag')
+    config.add_route('css-tag', '/css-tag')
 
     config.add_view(noop_view, route_name='index', renderer='index.html')
     config.add_view(noop_view, route_name='article', renderer='article.html')
@@ -88,6 +104,8 @@ def make_app(settings=None):
     config.add_view(bad_template_view, route_name='bad-template',
                     renderer='bad.html')
     config.add_view(image_url_view, route_name='image-url', renderer='string')
+    config.add_view(js_tag_view, route_name='js-tag', renderer='string')
+    config.add_view(css_tag_view, route_name='css-tag', renderer='string')
 
     return config.make_wsgi_app()
 
@@ -95,6 +113,11 @@ def make_app(settings=None):
 def app_factory(global_config, **local_conf):
     global_config.update(local_conf)
     return make_app(global_config)
+
+
+def compile_assets():
+    args = ['pcompile', test_ini_path]
+    return compile.main(args)
 
 
 if __name__ == '__main__':

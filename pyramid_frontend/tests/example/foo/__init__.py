@@ -9,4 +9,5 @@ class FooTheme(BaseTheme):
     ]
     assets = {
         'main-less': ('/_foo/css/main.less', 'less'),
+        'main-js': ('/_foo/js/main.js', 'requirejs'),
     }

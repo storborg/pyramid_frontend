@@ -13,10 +13,14 @@ def setup():
     utils.load_images()
 
 
-class TestTemplatingFunctional(TestCase):
-    def setUp(self):
-        self.app = TestApp(utils.make_app())
+class Functional(TestCase):
+    settings = None
 
+    def setUp(self):
+        self.app = TestApp(utils.make_app(self.settings))
+
+
+class TestTemplatingFunctional(Functional):
     def test_render_index(self):
         resp = self.app.get('/')
         resp.mustcontain('base theme base.html')
@@ -32,7 +36,36 @@ class TestTemplatingFunctional(TestCase):
             self.app.get('/bad-template')
 
 
-class TestImagesFunctional(TestCase):
+class TestAssetsFunctional(Functional):
+    def test_js_tag(self):
+        resp = self.app.get('/js-tag')
+        # XXX Add more
+
+    def test_css__tag(self):
+        resp = self.app.get('/css-tag')
+        # XXX Add more
+
+
+class TestCompiledFunctioanl(Functional):
+    settings = {
+        'pyramid_frontend.compile_less': True,
+        'pyramid_frontend.compile_requirejs': True,
+    }
+
+    def setUp(self):
+        Functional.setUp(self)
+        utils.compile_assets()
+
+    def test_js_tag(self):
+        resp = self.app.get('/js-tag')
+        # XXX Add more
+
+    def test_css__tag(self):
+        resp = self.app.get('/css-tag')
+        # XXX Add more
+
+
+class TestImagesFunctional(Functional):
     def setUp(self):
         self.app = TestApp(utils.make_app())
 

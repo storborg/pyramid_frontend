@@ -14,6 +14,14 @@ from pyramid_frontend.images.chain import FilterChain
 samples_dir = pkg_resources.resource_filename('pyramid_frontend.tests', 'data')
 
 
+default_settings = {
+    'pyramid_frontend.theme': 'foo',
+    'pyramid_frontend.original_image_dir': '/tmp/pfe-image-originals',
+    'pyramid_frontend.processed_image_dir': '/tmp/pfe-image-processed',
+    'pyramid_frontend.compiled_asset_dir': '/tmp/pfe-compiled'
+}
+
+
 def noop_view(request):
     return {}
 
@@ -55,14 +63,11 @@ def load_images(request):
         save_image(settings, name, original_ext, f)
 
 
-def make_app():
-    settings = {
-        'pyramid_frontend.theme': 'foo',
-        'pyramid_frontend.original_image_dir': '/tmp/pfe-image-originals',
-        'pyramid_frontend.processed_image_dir': '/tmp/pfe-image-processed',
-        'pyramid_frontend.compiled_asset_dir': '/tmp/pfe-compiled'
-    }
-    config = Configurator(settings=settings)
+def make_app(settings=None):
+    base_settings = default_settings.copy()
+    if settings:
+        base_settings.update(settings)
+    config = Configurator(settings=base_settings)
 
     config.include('pyramid_frontend')
 

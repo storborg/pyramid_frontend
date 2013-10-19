@@ -81,7 +81,7 @@ def load_images(settings=default_settings):
         save_image(settings, name, original_ext, f)
 
 
-def make_app(settings=None):
+def make_app(settings=None, theme_strategy=None):
     base_settings = default_settings.copy()
     if settings:
         base_settings.update(settings)
@@ -124,6 +124,9 @@ def make_app(settings=None):
 
     config.add_view(js_tag_view, route_name='js-tag', renderer='string')
     config.add_view(css_tag_view, route_name='css-tag', renderer='string')
+
+    if theme_strategy:
+        config.set_theme_strategy(theme_strategy)
 
     return config.make_wsgi_app()
 

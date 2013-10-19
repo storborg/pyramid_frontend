@@ -39,6 +39,22 @@ class TestTemplatingFunctional(Functional):
             self.app.get('/bad-template')
 
 
+class TestThemeStrategy(Functional):
+    def setUp(self):
+        def theme_strategy(req):
+            return req.params.get('theme', 'foo')
+        self.app = TestApp(utils.make_app(theme_strategy=theme_strategy))
+
+    def test_render_alternate_theme(self):
+        resp = self.app.get('/?theme=base')
+        self.assertIn('base', resp.body)
+        self.assertNotIn('foo', resp.body)
+
+        resp = self.app.get('/?theme=foo')
+        self.assertIn('base', resp.body)
+        self.assertIn('foo', resp.body)
+
+
 class TestAssetsFunctional(Functional):
     def test_js_tag(self):
         resp = self.app.get('/js-tag')
@@ -51,7 +67,7 @@ class TestAssetsFunctional(Functional):
         resp.mustcontain('less.js')
 
 
-class TestCompiledFunctioanl(Functional):
+class TestCompiledFunctional(Functional):
     settings = {
         'pyramid_frontend.compile_less': True,
         'pyramid_frontend.compile_requirejs': True,
@@ -66,6 +82,10 @@ class TestCompiledFunctioanl(Functional):
         self.assertNotIn('require.js', resp.body)
         # Look for something that looks like a hex digest
         self.assertRegexpMatches(resp.body, '[a-f0-9]{8,}')
+        # Fetch a second time to test caching and make sure it's the same
+        # result.
+        resp2 = self.app.get('/js-tag')
+        self.assertEqual(resp.body, resp2.body)
 
     def test_css__tag(self):
         resp = self.app.get('/css-tag')

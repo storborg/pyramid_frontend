@@ -36,11 +36,10 @@ class Theme(object):
         assert len(cls.__bases__) == 1, \
             "multiple inheritance not allowed for themes"
         while cls != Theme:
-            if hasattr(cls, name):
-                el = getattr(cls, name)
-                if qualify_paths:
-                    el = cls.qualify_path(el)
-                yield cls.key, el
+            el = getattr(cls, name)
+            if qualify_paths:
+                el = cls.qualify_path(el)
+            yield cls.key, el
             cls = cls.__bases__[0]
 
     @reify

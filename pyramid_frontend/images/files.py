@@ -6,6 +6,8 @@ import hashlib
 
 from datetime import datetime
 
+from PIL import Image
+
 
 filter_sep = '_'
 
@@ -36,6 +38,17 @@ def save_locally(path, f):
     diskf.close()
 
 
+def check(f):
+    """
+    Given a file object, check to see if the contents is a valid image. If so,
+    return the file format. Otherwise, raise exceptions.
+    """
+    im = Image.open(f)
+    # Raises exceptions if the file is broken in any way.
+    im.verify()
+    return (im.format, im.mode)
+
+
 def save_to_error_dir(settings, name, f):
     """
     Save a questionable image (could not be verified by PIL) to a penalty box
@@ -48,7 +61,6 @@ def save_to_error_dir(settings, name, f):
 
     filepath = os.path.join(dirpath, name)
     save_locally(filepath, f)
-    f.close()
 
 
 def ensure_dirs(settings, prefix):

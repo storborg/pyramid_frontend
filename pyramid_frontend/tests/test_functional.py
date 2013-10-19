@@ -6,6 +6,9 @@ from pyramid.mako_templating import MakoRenderingException
 
 from PIL import Image
 
+from ..images import files
+from ..images.view import MissingOriginal
+
 from . import utils
 
 
@@ -39,11 +42,13 @@ class TestTemplatingFunctional(Functional):
 class TestAssetsFunctional(Functional):
     def test_js_tag(self):
         resp = self.app.get('/js-tag')
-        # XXX Add more
+        resp.mustcontain('main.js')
+        resp.mustcontain('require.js')
 
     def test_css__tag(self):
         resp = self.app.get('/css-tag')
-        # XXX Add more
+        resp.mustcontain('main.less')
+        resp.mustcontain('less.js')
 
 
 class TestCompiledFunctioanl(Functional):
@@ -58,11 +63,15 @@ class TestCompiledFunctioanl(Functional):
 
     def test_js_tag(self):
         resp = self.app.get('/js-tag')
-        # XXX Add more
+        self.assertNotIn('require.js', resp.body)
+        # Look for something that looks like a hex digest
+        self.assertRegexpMatches(resp.body, '[a-f0-9]{8,}')
 
     def test_css__tag(self):
         resp = self.app.get('/css-tag')
-        # XXX Add more
+        self.assertNotIn('less.js', resp.body)
+        # Look for something that looks like a hex digest
+        self.assertRegexpMatches(resp.body, '[a-f0-9]{8,}')
 
 
 class TestImagesFunctional(Functional):
@@ -73,6 +82,46 @@ class TestImagesFunctional(Functional):
         url_resp = self.app.get('/image-url')
         img_resp = self.app.get(url_resp.body)
         # This image should be 200x200
+        f = StringIO(img_resp.body)
+        im = Image.open(f)
+        self.assertEqual(im.size, (200, 200))
+
+    def test_fetch_image_bad_prefix(self):
+        self.app.get('/img/aaaa/smiley-jpeg-rgb_jpg_thumb.png', status=404)
+
+    def test_fetch_image_bad_suffix(self):
+        name = 'smiley-jpeg-rgb'
+        prefix = files.prefix_for_name(name)
+        self.app.get('/img/%s/%s_jpg_nonexistent.png' % (prefix, name),
+                     status=404)
+
+    def test_fetch_twice(self):
+        name = 'smiley-jpeg-rgb'
+        prefix = files.prefix_for_name(name)
+        resp_a = self.app.get('/img/%s/%s_jpg_thumb.png' % (prefix, name))
+        # FIXME This should try to find a way to test that it's fetching from
+        # the filesystem the second time.
+        resp_b = self.app.get('/img/%s/%s_jpg_thumb.png' % (prefix, name))
+        self.assertEqual(resp_a.body, resp_b.body)
+
+    def test_fetch_missing_original(self):
+        name = 'nonexistent-file'
+        prefix = files.prefix_for_name(name)
+        with self.assertRaises(MissingOriginal):
+            self.app.get('/img/%s/%s_jpg_thumb.png' % (prefix, name))
+
+
+class TestImagesDebug(Functional):
+    def setUp(self):
+        settings = {
+            'debug': 'true',
+        }
+        self.app = TestApp(utils.make_app(settings))
+
+    def test_fetch_missing_original_placeholder(self):
+        name = 'nonexistent-file'
+        prefix = files.prefix_for_name(name)
+        img_resp = self.app.get('/img/%s/%s_jpg_thumb.png' % (prefix, name))
         f = StringIO(img_resp.body)
         im = Image.open(f)
         self.assertEqual(im.size, (200, 200))

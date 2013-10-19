@@ -2,7 +2,6 @@ import pkg_resources
 import os
 import os.path
 import glob
-import pkg_resources
 import shutil
 
 from pyramid.config import Configurator

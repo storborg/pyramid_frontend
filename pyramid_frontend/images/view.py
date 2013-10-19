@@ -5,6 +5,7 @@ import pkg_resources
 from pyramid.httpexceptions import HTTPNotFound
 from pyramid.response import Response
 from pyramid.static import FileResponse
+from pyramid.settings import asbool
 
 from .files import filter_sep, prefix_for_name, processed_path, original_path
 
@@ -70,9 +71,13 @@ class ImageView(object):
         if not os.path.exists(proc_path):
             orig_path = original_path(settings, name, original_ext)
             if not os.path.exists(orig_path):
-                if settings.get('debug'):
+                print "missing original"
+                print "settings: %r" % settings
+                if asbool(settings.get('debug')):
+                    print "returning placeholder"
                     return self.placeholder(chain)
                 else:
+                    print "raising"
                     raise MissingOriginal(path=orig_path, chain=chain)
             image_data = open(orig_path, 'rb')
             chain.run(proc_path, image_data)

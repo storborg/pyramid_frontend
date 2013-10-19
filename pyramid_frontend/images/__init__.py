@@ -16,6 +16,8 @@ def add_image_filter(config, chain, with_theme=None):
     filter_registry[chain.suffix] = (chain, with_theme)
 
 
+# FIXME Maybe this should be split into request.image_url() and
+# request.image_path() for qualified and non-qualified, respectively.
 def image_url(request, name, original_ext, filter_key):
     settings = request.registry.settings
     url_prefix = get_url_prefix(settings)

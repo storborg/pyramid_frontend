@@ -5,7 +5,6 @@ from .. import compile
 from . import utils
 
 
-
 class TestCompileCommand(TestCase):
 
     def test_pcompile_usage(self):

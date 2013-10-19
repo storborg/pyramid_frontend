@@ -46,6 +46,14 @@ def image_url_view(request):
     return request.image_url('smiley-jpeg-rgb', 'jpg', 'thumb')
 
 
+def image_tag_view(request):
+    return request.image_tag('smiley-jpeg-rgb', 'jpg', 'thumb')
+
+
+def image_original_path_view(request):
+    return request.image_original_path('smiley-jpeg-rgb', 'jpg')
+
+
 def js_tag_view(request):
     return request.asset_tag('main-js')
 
@@ -90,19 +98,30 @@ def make_app(settings=None):
 
     config.add_route('index', '/')
     config.add_route('article', '/article')
+
     config.add_route('bad-return', '/bad-return')
     config.add_route('bad-template', '/bad-template')
+
     config.add_route('image-url', '/image-url')
+    config.add_route('image-tag', '/image-tag')
+    config.add_route('image-original-path', '/image-original-path')
+
     config.add_route('js-tag', '/js-tag')
     config.add_route('css-tag', '/css-tag')
 
     config.add_view(noop_view, route_name='index', renderer='index.html')
     config.add_view(noop_view, route_name='article', renderer='article.html')
+
     config.add_view(bad_return_view, route_name='bad-return',
                     renderer='index.html')
     config.add_view(bad_template_view, route_name='bad-template',
                     renderer='bad.html')
+
     config.add_view(image_url_view, route_name='image-url', renderer='string')
+    config.add_view(image_tag_view, route_name='image-tag', renderer='string')
+    config.add_view(image_original_path_view, route_name='image-original-path',
+                    renderer='string')
+
     config.add_view(js_tag_view, route_name='js-tag', renderer='string')
     config.add_view(css_tag_view, route_name='css-tag', renderer='string')
 

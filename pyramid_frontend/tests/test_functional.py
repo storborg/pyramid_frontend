@@ -86,6 +86,19 @@ class TestImagesFunctional(Functional):
         im = Image.open(f)
         self.assertEqual(im.size, (200, 200))
 
+    def test_image_tag(self):
+        url_resp = self.app.get('/image-url')
+        tag_resp = self.app.get('/image-tag')
+        tag_resp.mustcontain('200')
+        tag_resp.mustcontain('height')
+        tag_resp.mustcontain('width')
+        tag_resp.mustcontain('width')
+        tag_resp.mustcontain(url_resp.body)
+
+    def test_image_original_path(self):
+        resp = self.app.get('/image-original-path')
+        resp.mustcontain('originals')
+
     def test_fetch_image_bad_prefix(self):
         self.app.get('/img/aaaa/smiley-jpeg-rgb_jpg_thumb.png', status=404)
 

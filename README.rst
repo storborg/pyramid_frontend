@@ -167,3 +167,30 @@ The following directories should be served up statically:
 
     /assets - map to ``pyramid_frontend.compiled_asset_dir``
     /_<theme key> - map to theme's static dir
+
+
+License
+=======
+
+pyramid_frontend is licensed under an MIT license. Please see the LICENSE file
+for more information.
+
+
+Code Standards
+==============
+
+pyramid_frontend has a comprehensive test suite with 100% line and branch
+coverage, as reported by the excellent ``coverage`` module. To run the tests,
+simply run in the top level of the repo::
+
+    $ nosetests
+
+There are no `PEP8 <http://www.python.org/dev/peps/pep-0008/>`_ or
+`Pyflakes <http://pypi.python.org/pypi/pyflakes>`_ warnings in the codebase. To
+verify that::
+
+    $ pip install pep8 pyflakes
+    $ pep8 .
+    $ pyflakes .
+
+Any pull requests must maintain the sanctity of these three pillars.

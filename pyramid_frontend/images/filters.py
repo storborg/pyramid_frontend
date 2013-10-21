@@ -1,8 +1,4 @@
-"""
-Classes for image filtering. Base classes for Filter stages, which can be
-chained indefinitely. Filters can take an arbitrary input and output, but by
-convention will tend to pass either PIL images or file-like objects.
-"""
+from __future__ import absolute_import, print_function, division
 
 import shutil
 import tempfile
@@ -21,7 +17,9 @@ class Filter(object):
     Filter stage superclass. Instances are called with some input data and
     produce some output data. Has some useful methods for processing.
 
-    Filter instances are called on input data and return output data.
+    Filter instances are called on input data and return output data. Filters
+    can take an arbitrary input and output, but by convention will tend to pass
+    either PIL images or file-like objects.
     """
 
     def adapt_input(self, input):

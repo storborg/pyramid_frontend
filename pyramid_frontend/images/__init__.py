@@ -1,3 +1,5 @@
+from __future__ import absolute_import, print_function, division
+
 from webhelpers.html.tags import HTML
 
 from .files import prefix_for_name, get_url_prefix, original_path

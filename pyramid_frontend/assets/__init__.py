@@ -1,3 +1,5 @@
+from __future__ import absolute_import, print_function, division
+
 import pkg_resources
 
 from webhelpers.html.tags import HTML

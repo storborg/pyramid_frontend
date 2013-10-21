@@ -1,3 +1,5 @@
+from __future__ import absolute_import, print_function, division
+
 import os.path
 import mimetypes
 import pkg_resources

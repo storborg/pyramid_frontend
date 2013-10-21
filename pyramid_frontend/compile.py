@@ -1,3 +1,5 @@
+from __future__ import absolute_import, print_function, division
+
 import os.path
 import optparse
 import sys
@@ -10,7 +12,7 @@ from pyramid_frontend.assets.less import LessCompiler
 
 
 def compile_theme(settings, theme):
-    print "Compiling theme: %s" % theme.key
+    print("Compiling theme: %s" % theme.key)
     output_dir = os.path.join(
         settings['pyramid_frontend.compiled_asset_dir'],
         theme.key)
@@ -38,7 +40,7 @@ def main(argv=sys.argv):
     options, args = parser.parse_args(argv[1:])
 
     if not args:
-        print "Requires a config file argument"
+        print("Requires a config file argument")
         return 2
     config_uri = args[0]
     env = bootstrap(config_uri, options=parse_vars(args[1:]))

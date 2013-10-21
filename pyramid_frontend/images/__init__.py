@@ -5,20 +5,24 @@ from .view import ImageView
 
 
 def add_image_filter(config, chain, with_theme=None):
-    register_theme = with_theme
-
-    def register():
+    """
+    Register an image filter chain.
+    """
+    def register(with_theme):
         settings = config.registry.settings
         filter_registry = settings.setdefault(
             'pyramid_frontend.image_filter_registry', {})
         if chain.suffix in filter_registry:
-            registered_chain, with_theme = filter_registry[chain.suffix]
+            registered_chain, registered_theme = filter_registry[chain.suffix]
             if registered_chain != chain:
                 raise ValueError(
                     "suffix %r already registered with different instance" %
                     chain.suffix)
-        filter_registry[chain.suffix] = (chain, register_theme)
-    config.action(('image_filter', chain.suffix, with_theme), register)
+        filter_registry[chain.suffix] = (chain, with_theme)
+
+    config.action(('image_filter', chain.suffix, with_theme),
+                  register,
+                  args=(with_theme,))
 
 
 # FIXME Maybe this should be split into request.image_url() and

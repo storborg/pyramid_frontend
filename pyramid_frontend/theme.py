@@ -108,10 +108,8 @@ def add_theme(config, cls):
     """
     Initialize and register a theme for use.
     """
-    theme_class = cls
-
-    def register():
-        resolved_cls = config.maybe_dotted(theme_class)
+    def register(cls):
+        resolved_cls = config.maybe_dotted(cls)
 
         settings = config.registry.settings
         themes = settings.setdefault('pyramid_frontend.theme_registry', {})
@@ -131,7 +129,10 @@ def add_theme(config, cls):
         # conflicts.
         for chain in theme.stacked_image_filters:
             config.add_image_filter(chain, with_theme=theme)
-    config.action(('theme', cls.key), register)
+
+    config.action(('theme', cls.key),
+                  register,
+                  args=(cls,))
 
 
 def set_theme_strategy(config, strategy_func):

@@ -20,9 +20,17 @@ def add_image_filter(config, chain, with_theme=None):
                     chain.suffix)
         filter_registry[chain.suffix] = (chain, with_theme)
 
+    intr = config.introspectable(category_name='image_filters',
+                                 discriminator=chain.suffix,
+                                 title=chain.suffix,
+                                 type_name=None)
+    intr['chain'] = chain
+    intr['with_theme'] = with_theme
+
     config.action(('image_filter', chain.suffix, with_theme),
                   register,
-                  args=(with_theme,))
+                  args=(with_theme,),
+                  introspectables=(intr,))
 
 
 # FIXME Maybe this should be split into request.image_url() and

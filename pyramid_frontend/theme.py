@@ -130,9 +130,16 @@ def add_theme(config, cls):
         for chain in theme.stacked_image_filters:
             config.add_image_filter(chain, with_theme=theme)
 
+    intr = config.introspectable(category_name='themes',
+                                 discriminator=cls.key,
+                                 title=cls.key,
+                                 type_name=None)
+    intr['cls'] = cls
+
     config.action(('theme', cls.key),
                   register,
-                  args=(cls,))
+                  args=(cls,),
+                  introspectables=(intr,))
 
 
 def set_theme_strategy(config, strategy_func):

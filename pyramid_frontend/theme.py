@@ -109,28 +109,31 @@ def add_theme(config, cls):
     """
     Initialize and register a theme for use.
     """
-    package = caller_package(level=3)
-    resolver = DottedNameResolver(package=package)
-    cls = resolver.maybe_resolve(cls)
+    theme_class = cls
+    def register():
+        package = caller_package(level=3)
+        resolver = DottedNameResolver(package=package)
+        resolved_cls = resolver.maybe_resolve(theme_class)
 
-    settings = config.registry.settings
-    themes = settings.setdefault('pyramid_frontend.theme_registry', {})
-    theme = cls(settings)
-    themes[theme.key] = theme
-    theme.includeme(config)
+        settings = config.registry.settings
+        themes = settings.setdefault('pyramid_frontend.theme_registry', {})
+        theme = resolved_cls(settings)
+        themes[theme.key] = theme
+        theme.includeme(config)
 
-    # Register static dirs.
-    static_dirs = settings.setdefault('pyramid_frontend.static_registry',
-                                      set())
-    for key, dir in theme.keyed_static_dirs:
-        if (key, dir) not in static_dirs:
-            static_dirs.add((key, dir))
-            config.add_static_view('_%s' % key, path=dir)
+        # Register static dirs.
+        static_dirs = settings.setdefault('pyramid_frontend.static_registry',
+                                          set())
+        for key, dir in theme.keyed_static_dirs:
+            if (key, dir) not in static_dirs:
+                static_dirs.add((key, dir))
+                config.add_static_view('_%s' % key, path=dir)
 
-    # Update global image filter registry as well, and ensure there are no
-    # conflicts.
-    for chain in theme.stacked_image_filters:
-        config.add_image_filter(chain, with_theme=theme)
+        # Update global image filter registry as well, and ensure there are no
+        # conflicts.
+        for chain in theme.stacked_image_filters:
+            config.add_image_filter(chain, with_theme=theme)
+    config.action(('theme', cls.key), register)
 
 
 def set_theme_strategy(config, strategy_func):

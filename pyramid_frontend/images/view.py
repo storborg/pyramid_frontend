@@ -49,7 +49,7 @@ class ImageView(object):
 
         url_prefix = self.request.matchdict['prefix']
         name = self.request.matchdict['name']
-        ext = self.request.matchdict['ext']
+        name, ext = name.rsplit('.', 1)
 
         if filter_sep in name:
             name, original_ext, chain_name = name.split(filter_sep, 2)
@@ -71,13 +71,9 @@ class ImageView(object):
         if not os.path.exists(proc_path):
             orig_path = original_path(settings, name, original_ext)
             if not os.path.exists(orig_path):
-                print "missing original"
-                print "settings: %r" % settings
                 if asbool(settings.get('debug')):
-                    print "returning placeholder"
                     return self.placeholder(chain)
                 else:
-                    print "raising"
                     raise MissingOriginal(path=orig_path, chain=chain)
             image_data = open(orig_path, 'rb')
             chain.run(proc_path, image_data)

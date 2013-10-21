@@ -43,7 +43,9 @@ def bad_template_view(request):
 
 
 def image_url_view(request):
-    return request.image_url('smiley-jpeg-rgb', 'jpg', 'thumb')
+    qualified = bool(request.params.get('qualified'))
+    return request.image_url('smiley-jpeg-rgb', 'jpg', 'thumb',
+                             qualified=qualified)
 
 
 def image_tag_view(request):

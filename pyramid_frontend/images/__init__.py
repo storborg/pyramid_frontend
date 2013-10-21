@@ -35,9 +35,8 @@ def add_image_filter(config, chain, with_theme=None):
 
 # FIXME Maybe this should be split into request.image_url() and
 # request.image_path() for qualified and non-qualified, respectively.
-def image_url(request, name, original_ext, filter_key):
+def image_url(request, name, original_ext, filter_key, qualified=False, **kw):
     settings = request.registry.settings
-    url_prefix = get_url_prefix(settings)
     filter_registry = settings['pyramid_frontend.image_filter_registry']
 
     # XXX Add this: check if there is a theme active. If so, check that the
@@ -46,9 +45,19 @@ def image_url(request, name, original_ext, filter_key):
 
     chain, with_theme = filter_registry[filter_key]
 
-    return '/'.join([url_prefix,
-                     prefix_for_name(name),
-                     chain.basename(name, original_ext)])
+    prefix = prefix_for_name(name)
+    name = chain.basename(name, original_ext)
+    if qualified:
+        print "req: qualified"
+        return request.route_url('pyramid_frontend:images',
+                                 prefix=prefix,
+                                 name=name,
+                                 _scheme=kw.get('_scheme', request.scheme),
+                                 _host=kw.get('_host', request.host))
+    else:
+        return request.route_path('pyramid_frontend:images',
+                                  prefix=prefix,
+                                  name=name)
 
 
 def image_tag(request, name, original_ext, filter_key, **kwargs):
@@ -77,5 +86,5 @@ def includeme(config):
 
     url_prefix = get_url_prefix(config.registry.settings)
     config.add_route('pyramid_frontend:images',
-                     '%s/{prefix}/{name}.{ext}' % url_prefix)
+                     '%s/{prefix}/{name:.+\.\w+}' % url_prefix)
     config.add_view(ImageView, route_name='pyramid_frontend:images')

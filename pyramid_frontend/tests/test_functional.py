@@ -106,6 +106,12 @@ class TestImagesFunctional(Functional):
         im = Image.open(f)
         self.assertEqual(im.size, (200, 200))
 
+    def test_qualified_image_url(self):
+        url_resp = self.app.get('/image-url')
+        qual_resp = self.app.get('/image-url?qualified=1')
+        self.assertTrue(qual_resp.body.endswith(url_resp.body))
+        self.assertTrue(qual_resp.body.startswith('http://'))
+
     def test_image_tag(self):
         url_resp = self.app.get('/image-url')
         tag_resp = self.app.get('/image-tag')

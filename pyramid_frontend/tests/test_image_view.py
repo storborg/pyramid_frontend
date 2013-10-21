@@ -12,7 +12,6 @@ class TestImageView(TestCase):
         with testing.testConfig():
             request = testing.DummyRequest()
             request.matchdict['prefix'] = 'aaaa'
-            request.matchdict['name'] = 'nonexistent-image'
-            request.matchdict['ext'] = 'jpg'
+            request.matchdict['name'] = 'nonexistent-image.jpg'
             with self.assertRaises(HTTPNotFound):
                 ImageView(request)()

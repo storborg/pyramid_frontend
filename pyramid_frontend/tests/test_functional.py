@@ -87,7 +87,7 @@ class TestCompiledFunctional(Functional):
         resp2 = self.app.get('/js-tag')
         self.assertEqual(resp.body, resp2.body)
 
-    def test_css__tag(self):
+    def test_css_tag(self):
         resp = self.app.get('/css-tag')
         self.assertNotIn('less.js', resp.body)
         # Look for something that looks like a hex digest

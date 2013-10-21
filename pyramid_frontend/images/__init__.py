@@ -6,6 +6,7 @@ from .view import ImageView
 
 def add_image_filter(config, chain, with_theme=None):
     register_theme = with_theme
+
     def register():
         settings = config.registry.settings
         filter_registry = settings.setdefault(

@@ -110,6 +110,7 @@ def add_theme(config, cls):
     Initialize and register a theme for use.
     """
     theme_class = cls
+
     def register():
         package = caller_package(level=3)
         resolver = DottedNameResolver(package=package)

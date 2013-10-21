@@ -2,6 +2,7 @@ from webhelpers.html.tags import HTML
 
 from .files import prefix_for_name, get_url_prefix, original_path
 from .view import ImageView
+from .chain import FilterChain, PassThroughFilterChain
 
 
 def add_image_filter(config, chain, with_theme=None):
@@ -9,16 +10,21 @@ def add_image_filter(config, chain, with_theme=None):
     Register an image filter chain.
     """
     def register(with_theme):
-        settings = config.registry.settings
-        filter_registry = settings.setdefault(
-            'pyramid_frontend.image_filter_registry', {})
+        registry = config.registry
+
+        if not hasattr(registry, 'image_filter_registry'):
+            registry.image_filter_registry = {}
+        filter_registry = registry.image_filter_registry
+
         if chain.suffix in filter_registry:
-            registered_chain, registered_theme = filter_registry[chain.suffix]
+            registered_chain, registered_theme_set = filter_registry[chain.suffix]
             if registered_chain != chain:
                 raise ValueError(
                     "suffix %r already registered with different instance" %
                     chain.suffix)
-        filter_registry[chain.suffix] = (chain, with_theme)
+            registered_theme_set.add(with_theme)
+
+        filter_registry[chain.suffix] = (chain, set([with_theme]))
 
     intr = config.introspectable(category_name='image_filters',
                                  discriminator=chain.suffix,
@@ -36,8 +42,7 @@ def add_image_filter(config, chain, with_theme=None):
 # FIXME Maybe this should be split into request.image_url() and
 # request.image_path() for qualified and non-qualified, respectively.
 def image_url(request, name, original_ext, filter_key, qualified=False, **kw):
-    settings = request.registry.settings
-    filter_registry = settings['pyramid_frontend.image_filter_registry']
+    filter_registry = request.registry.image_filter_registry
 
     # XXX Add this: check if there is a theme active. If so, check that the
     # supplied filter_key is ref'd within the theme: if not, fail with a
@@ -61,8 +66,7 @@ def image_url(request, name, original_ext, filter_key, qualified=False, **kw):
 
 
 def image_tag(request, name, original_ext, filter_key, **kwargs):
-    settings = request.registry.settings
-    filter_registry = settings['pyramid_frontend.image_filter_registry']
+    filter_registry = request.registry.image_filter_registry
     chain, with_theme = filter_registry[filter_key]
 
     kwargs.setdefault('width', chain.width)
@@ -79,6 +83,7 @@ def image_original_path(request, name, original_ext):
 
 def includeme(config):
     config.add_directive('add_image_filter', add_image_filter)
+    config.add_image_filter(PassThroughFilterChain())
 
     config.add_request_method(image_url, 'image_url')
     config.add_request_method(image_tag, 'image_tag')

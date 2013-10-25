@@ -45,13 +45,15 @@ def bad_template_view(request):
 
 
 def image_url_view(request):
+    filter_key = request.params.get('filter_key', 'thumb')
     qualified = bool(request.params.get('qualified'))
-    return request.image_url('smiley-jpeg-rgb', 'jpg', 'thumb',
+    return request.image_url('smiley-jpeg-rgb', 'jpg', filter_key,
                              qualified=qualified)
 
 
 def image_tag_view(request):
-    return request.image_tag('smiley-jpeg-rgb', 'jpg', 'thumb')
+    filter_key = request.params.get('filter_key', 'thumb')
+    return request.image_tag('smiley-jpeg-rgb', 'jpg', filter_key)
 
 
 def image_original_path_view(request):

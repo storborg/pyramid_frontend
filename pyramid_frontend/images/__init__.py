@@ -9,7 +9,7 @@ from .chain import PassThroughFilterChain
 
 def add_image_filter(config, chain, with_theme=None):
     """
-    Register an image filter chain.
+    Pyramid config directive to register an image filter chain.
     """
     def register(with_theme):
         registry = config.registry
@@ -26,8 +26,11 @@ def add_image_filter(config, chain, with_theme=None):
                     "suffix %r already registered with different instance" %
                     chain.suffix)
             registered_theme_set.add(with_theme)
-
-        filter_registry[chain.suffix] = (chain, set([with_theme]))
+        else:
+            with_theme_set = set()
+            if with_theme:
+                with_theme_set.add(with_theme)
+            filter_registry[chain.suffix] = (chain, with_theme_set)
 
     intr = config.introspectable(category_name='image_filters',
                                  discriminator=chain.suffix,
@@ -42,17 +45,21 @@ def add_image_filter(config, chain, with_theme=None):
                   introspectables=(intr,))
 
 
-# FIXME Maybe this should be split into request.image_url() and
-# request.image_path() for qualified and non-qualified, respectively.
 def image_url(request, name, original_ext, filter_key,
               qualified=False, _scheme=None, _host=None):
+    """
+    Return the URL for an image as processed by a specified image filter chain.
+    """
     filter_registry = request.registry.image_filter_registry
 
-    # XXX Add this: check if there is a theme active. If so, check that the
-    # supplied filter_key is ref'd within the theme: if not, fail with a
-    # descriptive exception.
-
-    chain, with_theme = filter_registry[filter_key]
+    # Check if there is a theme active. If so, check that the supplied
+    # filter_key is ref'd within the theme: if not, fail with a descriptive
+    # exception.
+    chain, with_theme_set = filter_registry[filter_key]
+    if with_theme_set and getattr(request, 'theme', None):
+        assert request.theme in with_theme_set, \
+            ("current theme is %r, but this filter is only registered "
+             "with %r" % (request.theme, with_theme_set))
 
     prefix = prefix_for_name(name)
     name = chain.basename(name, original_ext)
@@ -70,6 +77,10 @@ def image_url(request, name, original_ext, filter_key,
 
 def image_tag(request, name, original_ext, filter_key,
               qualified=False, _scheme=None, _host=None, **kwargs):
+    """
+    Return the HTML tag for an image as processed by a specified image filter
+    chain.
+    """
     filter_registry = request.registry.image_filter_registry
     chain, with_theme = filter_registry[filter_key]
 
@@ -83,6 +94,9 @@ def image_tag(request, name, original_ext, filter_key,
 
 
 def image_original_path(request, name, original_ext):
+    """
+    Return the filesystem path for an original image.
+    """
     settings = request.registry.settings
     return original_path(settings, name, original_ext)
 

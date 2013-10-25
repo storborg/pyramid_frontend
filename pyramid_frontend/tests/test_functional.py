@@ -114,6 +114,12 @@ class TestImagesFunctional(Functional):
         self.assertTrue(qual_resp.body.endswith(url_resp.body))
         self.assertTrue(qual_resp.body.startswith('http://'))
 
+    def test_image_url_theme(self):
+        self.app.get('/image-url?filter_key=full')
+
+        with self.assertRaises(AssertionError):
+            self.app.get('/image-url?filter_key=barthumb')
+
     def test_image_tag(self):
         url_resp = self.app.get('/image-url')
         tag_resp = self.app.get('/image-tag')

@@ -25,6 +25,9 @@ class Theme(object):
         self.settings = settings
         self._compiled_asset_cache = {}
 
+    def __repr__(self):
+        return '<%s: %s>' % (self.__class__.__name__, self.key)
+
     def includeme(self, config):
         pass
 

@@ -23,3 +23,9 @@ class TestTheme(TestCase):
                          [('c', 'c-templates'),
                           ('b', 'a-templates'),
                           ('a', 'a-templates')])
+
+    def test_repr(self):
+        class BlahTheme(Theme):
+            key = 'blah'
+
+        self.assertIn('blah', repr(BlahTheme(())))

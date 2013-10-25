@@ -35,6 +35,10 @@ class TestFilterChain(TestCase):
         self.assertEqual(chain.basename('delicious', 'gif'),
                          'delicious_gif_thumb200.png')
 
+    def test_repr(self):
+        chain = FilterChain('zygolicious', extension='png')
+        self.assertIn('zygolicious', repr(chain))
+
     def test_basename_passthrough(self):
         chain = PassThroughFilterChain()
         self.assertEqual(chain.basename('some-cool-image', 'jpg'),

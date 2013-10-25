@@ -51,6 +51,9 @@ class FilterChain(object):
 
         self.filters.append(postprocessors[self.extension]())
 
+    def __repr__(self):
+        return '<%s: %s>' % (self.__class__.__name__, self.suffix)
+
     def basename(self, name, original_ext):
         return ''.join([name,
                         filter_sep,

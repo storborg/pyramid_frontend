@@ -30,8 +30,20 @@ class TestCompileCommand(TestCase):
         self.assertIn('config_uri', buf.getvalue())
 
     def test_pcompile(self):
-        retcode = utils.compile_assets()
+        args = ['pcompile', utils.test_ini_path]
+        retcode = compile.main(args)
         self.assertEqual(retcode, 0)
+
+    def test_pcompile_verbose(self):
+        args = ['pcompile', utils.test_ini_path, '--verbose']
+        retcode = compile.main(args)
+        self.assertEqual(retcode, 0)
+
+    def test_pcompile_no_minify(self):
+        args = ['pcompile', utils.test_ini_path, '--no-minify']
+        retcode = compile.main(args)
+        self.assertEqual(retcode, 0)
+        # XXX Try to assett hat this makes longer assets or something.
 
 
 class TestCompiler(TestCase):

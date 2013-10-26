@@ -11,13 +11,15 @@ from hashlib import sha1
 
 class Compiler(object):
 
-    def __init__(self, theme, output_dir, minify=True):
+    def __init__(self, theme, output_dir, minify=True, verbose=False):
         self.theme = theme
         self.output_dir = output_dir
         self.minify = minify
+        self.verbose = verbose
 
     def run_command(self, argv):
-        print('Running command: {0} ...'.format(' '.join(argv)))
+        if self.verbose:
+            print('Running command: {0} ...'.format(' '.join(argv)))
         start_time = time.time()
         try:
             subprocess.check_output(argv, stderr=subprocess.STDOUT)
@@ -25,10 +27,12 @@ class Compiler(object):
             print(e.output)
             raise
         elapsed_time = time.time() - start_time
-        print('Command completed in {:.4f} seconds.'.format(elapsed_time))
+        if self.verbose:
+            print('Command completed in {:.4f} seconds.'.format(elapsed_time))
 
     def write(self, key, contents, entry_point):
-        print('Write - key: %r, entry_point: %r' % (key, entry_point))
+        if self.verbose:
+            print('Write - key: %r, entry_point: %r' % (key, entry_point))
         hash = sha1(contents).hexdigest()
 
         name = os.path.basename(entry_point)
@@ -39,12 +43,14 @@ class Compiler(object):
         if not os.path.isdir(self.output_dir):
             os.makedirs(self.output_dir)
 
-        print('Writing to {0} ...'.format(file_path))
+        if self.verbose:
+            print('Writing to {0} ...'.format(file_path))
         with open(file_path, 'wb') as f:
             f.write(contents)
 
         map_path = os.path.join(self.output_dir, key + '.map')
-        print('Writing map file to {0} ...'.format(map_path))
+        if self.verbose:
+            print('Writing map file to {0} ...'.format(map_path))
         with open(map_path, 'w') as f:
             f.write(file_name)
 

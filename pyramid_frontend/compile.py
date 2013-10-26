@@ -5,30 +5,32 @@ import argparse
 import sys
 
 from pyramid.paster import bootstrap
-from pyramid.scripts.common import parse_vars
 
 from pyramid_frontend.assets.requirejs import RequireJSCompiler
 from pyramid_frontend.assets.less import LessCompiler
 
 
-def compile_theme(settings, theme):
-    print("Compiling theme: %s" % theme.key)
+def compile_theme(settings, theme, minify=True, verbose=False):
+    if verbose:
+        print("Compiling theme: %s" % theme.key)
     output_dir = os.path.join(
         settings['pyramid_frontend.compiled_asset_dir'],
         theme.key)
     compilers = {
-        'requirejs': RequireJSCompiler(theme, output_dir),
-        'less': LessCompiler(theme, output_dir),
+        'requirejs': RequireJSCompiler,
+        'less': LessCompiler,
     }
     for key, (entry_point, asset_type) in theme.stacked_assets.iteritems():
-        compilers[asset_type].compile(key, entry_point)
+        cls = compilers[asset_type]
+        compiler = cls(theme, output_dir, minify=minify, verbose=verbose)
+        compiler.compile(key, entry_point)
 
 
-def compile(registry):
+def compile(registry, minify=True, verbose=False):
     settings = registry.settings
     theme_registry = settings['pyramid_frontend.theme_registry']
     for theme in theme_registry.itervalues():
-        compile_theme(settings, theme)
+        compile_theme(settings, theme, minify=minify, verbose=verbose)
 
 
 def main(args=sys.argv):
@@ -41,5 +43,5 @@ def main(args=sys.argv):
 
     env = bootstrap(options.config_uri)
     registry = env['registry']
-    compile(registry)
+    compile(registry, minify=(not options.no_minify), verbose=options.verbose)
     return 0

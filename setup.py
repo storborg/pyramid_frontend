@@ -1,15 +1,39 @@
+import os
 from setuptools import setup
+from distutils.command.build import build as _build
 
 
-# The following executables are also required in PATH.
-#   jpegoptim
-#   pngcrush
-#   optipng
-#   convert (from GraphicsMagick or ImageMagick)
-#   lessc
-#   r.js
+executables = [
+    'jpegoptim',
+    'pngcrush',
+    'optipng',
+    'convert',  # From GraphicsMagick or ImageMagick.
+    'lessc',
+    'r.js',
+]
+
+
+def which(exe):
+    for path in os.environ['PATH'].split(os.pathsep):
+        fpath = os.path.join(path, exe)
+        if os.path.exists(fpath) and os.access(fpath, os.X_OK):
+            return fpath
+
+
+class build(_build):
+    def finalize_options(self):
+        _build.finalize_options(self)
+        for exe in executables:
+            print 'checking for %r...' % exe,
+            fpath = which(exe)
+            if not fpath:
+                print 'WARNING: Missing %r executable!' % exe
+            else:
+                print fpath
+
 
 setup(name='pyramid_frontend',
+      cmdclass={'build': build},
       version='0.1',
       description='Themes, image filtering, and frontend asset handling.',
       long_description='',

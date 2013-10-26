@@ -13,6 +13,7 @@
 
 # Setuptools distribution folder.
 /dist/
+/build/
 
 # Egg metadata, regenerated from source files by setuptools.
 /pyramid_frontend.egg-info

@@ -132,19 +132,19 @@ def add_theme(config, cls):
     for chain in theme.stacked_image_filters:
         config.add_image_filter(chain, with_theme=theme)
 
-    def register(cls):
+    def register(theme):
         themes = settings.setdefault('pyramid_frontend.theme_registry', {})
         themes[theme.key] = theme
 
     intr = config.introspectable(category_name='themes',
-                                 discriminator=cls.key,
-                                 title=cls.key,
+                                 discriminator=theme.key,
+                                 title=theme.key,
                                  type_name=None)
-    intr['cls'] = cls
+    intr['theme'] = theme
 
-    config.action(('theme', cls.key),
+    config.action(('theme', theme.key),
                   register,
-                  args=(cls,),
+                  args=(theme,),
                   introspectables=(intr,))
 
 

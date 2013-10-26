@@ -1,7 +1,7 @@
 from __future__ import absolute_import, print_function, division
 
 import os.path
-import optparse
+import argparse
 import sys
 
 from pyramid.paster import bootstrap
@@ -31,19 +31,15 @@ def compile(registry):
         compile_theme(settings, theme)
 
 
-def main(argv=sys.argv):
-    parser = optparse.OptionParser(
-        '%prog config_uri',
-        description='Compile static assets.',
-    )
+def main(args=sys.argv):
+    parser = argparse.ArgumentParser(description='Compile static assets.')
+    parser.add_argument('--no-minify', action='store_true', default=False)
+    parser.add_argument('--verbose', action='store_true', default=False)
+    parser.add_argument('config_uri')
 
-    options, args = parser.parse_args(argv[1:])
+    options = parser.parse_args(args[1:])
 
-    if not args:
-        print("Requires a config file argument")
-        return 2
-    config_uri = args[0]
-    env = bootstrap(config_uri, options=parse_vars(args[1:]))
+    env = bootstrap(options.config_uri)
     registry = env['registry']
     compile(registry)
     return 0

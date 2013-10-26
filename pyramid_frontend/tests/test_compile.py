@@ -2,7 +2,9 @@ from __future__ import absolute_import, print_function, division
 
 import os.path
 import subprocess
+from mock import patch
 from unittest import TestCase
+from cStringIO import StringIO
 
 from .. import compile
 from ..assets.compiler import Compiler
@@ -19,8 +21,13 @@ class TestCompileCommand(TestCase):
         args = [
             'pcompile',
         ]
-        return_code = compile.main(args)
-        self.assertEqual(return_code, 2)
+        buf = StringIO()
+        with patch('sys.stderr', buf):
+            with self.assertRaises(SystemExit) as cm:
+                compile.main(args)
+            exit_exception = cm.exception
+            self.assertEqual(exit_exception.code, 2)
+        self.assertIn('config_uri', buf.getvalue())
 
     def test_pcompile(self):
         retcode = utils.compile_assets()

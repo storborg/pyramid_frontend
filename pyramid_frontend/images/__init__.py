@@ -2,12 +2,14 @@ from __future__ import absolute_import, print_function, division
 
 from webhelpers.html.tags import HTML
 
-from .files import prefix_for_name, get_url_prefix, original_path
+from .files import (prefix_for_name, get_url_prefix, original_path,
+                    save_image, save_to_error_dir, check)
 from .filters import Filter
 from .view import ImageView, MissingOriginal
 from .chain import PassThroughFilterChain, FilterChain
 
-__all__ = ['Filter', 'FilterChain', 'MissingOriginal']
+__all__ = ['Filter', 'FilterChain', 'MissingOriginal',
+           'save_image', 'save_to_error_dir', 'check']
 
 
 def add_image_filter(config, chain, with_theme=None):

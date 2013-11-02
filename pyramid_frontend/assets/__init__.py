@@ -2,7 +2,7 @@ from __future__ import absolute_import, print_function, division
 
 import pkg_resources
 
-from webhelpers.html.tags import HTML
+from webhelpers.html.tags import HTML, literal
 from pyramid.settings import asbool
 
 
@@ -61,7 +61,7 @@ def asset_tag(request, key, **kwargs):
     if should_compile:
         filename = theme.compiled_asset_path(key)
         url_path = '/compiled/' + theme.key + '/' + filename
-    return tag_func(url_path, theme)
+    return literal(tag_func(url_path, theme))
 
 
 def includeme(config):

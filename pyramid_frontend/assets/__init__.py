@@ -1,7 +1,5 @@
 from __future__ import absolute_import, print_function, division
 
-import pkg_resources
-
 from webhelpers.html.tags import HTML, literal
 from pyramid.settings import asbool
 
@@ -66,9 +64,6 @@ def asset_tag(request, key, **kwargs):
 
 def includeme(config):
     config.add_request_method(asset_tag, 'asset_tag')
-
-    path = pkg_resources.resource_filename('pyramid_frontend', 'static')
-    config.add_static_view(name='_pfe', path=path)
 
     compiled_path = \
         config.registry.settings['pyramid_frontend.compiled_asset_dir']

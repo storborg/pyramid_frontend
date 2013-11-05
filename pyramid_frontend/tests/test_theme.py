@@ -29,3 +29,34 @@ class TestTheme(TestCase):
             key = 'blah'
 
         self.assertIn('blah', repr(BlahTheme(())))
+
+
+class TestThemeOpt(TestCase):
+    def setUp(self):
+        class A(Theme):
+            key = 'a'
+
+        class B(Theme):
+            key = 'b'
+            frobozz = 127
+
+        class C(Theme):
+            key = 'c'
+            frobozz = 42
+
+        self.a = A({})
+        self.b = B({})
+        self.c = C({})
+
+    def test_opt_missing(self):
+        with self.assertRaises(AttributeError):
+            self.a.opt('frobozz')
+
+    def test_opt_missing_with_default(self):
+        self.assertEqual(self.a.opt('frobozz', 'somedefault'), 'somedefault')
+
+    def test_opt_present(self):
+        self.assertEqual(self.b.opt('frobozz'), 127)
+
+    def test_opt_override(self):
+        self.assertEqual(self.c.opt('frobozz'), 42)

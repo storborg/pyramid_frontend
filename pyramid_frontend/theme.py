@@ -13,6 +13,9 @@ from .templating.renderer import MakoRenderer
 static_dir = pkg_resources.resource_filename('pyramid_frontend', 'static')
 
 
+default_sentinel = object()
+
+
 class Theme(object):
     template_dir = 'templates'
     static_dir = 'static'
@@ -115,6 +118,12 @@ class Theme(object):
         theme_dirs = dict(self.keyed_static_dirs)
         base_dir = theme_dirs[theme_key]
         return os.path.join(base_dir, path)
+
+    def opt(self, key, default=default_sentinel):
+        if default is default_sentinel:
+            return getattr(self, key)
+        else:
+            return getattr(self, key, default)
 
 
 def add_theme(config, cls):

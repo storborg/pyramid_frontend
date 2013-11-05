@@ -4,6 +4,8 @@ from unittest import TestCase
 
 from pyramid_frontend.theme import Theme
 
+from .example import base, foo, bar
+
 
 class TestTheme(TestCase):
     def test_traverse_attributes(self):
@@ -60,3 +62,22 @@ class TestThemeOpt(TestCase):
 
     def test_opt_override(self):
         self.assertEqual(self.c.opt('frobozz'), 42)
+
+
+class TestThemeStatic(TestCase):
+    def setUp(self):
+        self.base = base.BaseTheme({})
+        self.foo = foo.FooTheme({})
+        self.bar = bar.BarTheme({})
+
+    def test_static_missing(self):
+        with self.assertRaises(IOError):
+            self.foo.static('images/nonexistent.jpg')
+
+    def test_static_present(self):
+        self.assertEqual(self.base.static('txt/sample.txt'),
+                         '/_base/txt/sample.txt')
+
+    def test_static_override(self):
+        self.assertEqual(self.foo.static('txt/sample.txt'),
+                         '/_foo/txt/sample.txt')

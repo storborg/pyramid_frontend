@@ -125,6 +125,12 @@ class Theme(object):
         else:
             return getattr(self, key, default)
 
+    def static(self, path):
+        for key, static_dir in self.keyed_static_dirs:
+            if os.path.exists(os.path.join(static_dir, path)):
+                return '/_%s/%s' % (key, path)
+        raise IOError('path %r does not exist in any static dirs' % path)
+
 
 def add_theme(config, cls):
     """

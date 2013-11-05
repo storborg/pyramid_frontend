@@ -64,7 +64,8 @@ class Theme(object):
             'from webhelpers.html import escape',
         ]
         template_imports.extend(aslist(
-            self.settings.get('pyramid_frontend.template_imports', '')))
+            self.settings.get('pyramid_frontend.template_imports', ''),
+            flatten=False))
         return SuperTemplateLookup(directories=self.template_dirs,
                                    input_encoding='utf-8',
                                    output_encoding='utf-8',

@@ -5,6 +5,7 @@ import inspect
 import pkg_resources
 
 from pyramid.decorator import reify
+from pyramid.settings import aslist
 
 from .templating.lookup import SuperTemplateLookup
 from .templating.renderer import MakoRenderer
@@ -56,9 +57,16 @@ class Theme(object):
 
     @reify
     def lookup(self):
+        template_imports = [
+            'from webhelpers.html import escape',
+        ]
+        template_imports.extend(aslist(
+            self.settings.get('pyramid_frontend.template_imports', '')))
         return SuperTemplateLookup(directories=self.template_dirs,
                                    input_encoding='utf-8',
-                                   output_encoding='utf-8')
+                                   output_encoding='utf-8',
+                                   imports=template_imports,
+                                   default_filters=['escape'])
 
     @reify
     def stacked_image_filters(self):

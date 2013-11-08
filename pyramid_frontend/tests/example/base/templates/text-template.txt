@@ -1,0 +1,3 @@
+should not be escaped: ${'<foo>'}
+
+should be escaped: ${'<foo>' | escape}

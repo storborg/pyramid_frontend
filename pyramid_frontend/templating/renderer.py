@@ -9,8 +9,9 @@ from pyramid.mako_templating import MakoRenderingException
 
 class MakoRenderer(object):
 
-    def __init__(self, info):
+    def __init__(self, info, clear_default_filters=False):
         self.name = info.name
+        self.clear_default_filters = clear_default_filters
 
     def __call__(self, value, system):
         """Find and render a template.
@@ -40,7 +41,11 @@ class MakoRenderer(object):
         request = system['request']
 
         theme = request.theme
-        lookup = theme.lookup
+        if self.clear_default_filters:
+            lookup = theme.lookup_nofilters
+        else:
+            lookup = theme.lookup
+
         template = lookup.get_template(self.name)
 
         try:
@@ -56,3 +61,11 @@ class MakoRenderer(object):
                 del exc_info
 
         return result
+
+
+def mako_renderer_factory(info):
+    return MakoRenderer(info)
+
+
+def mako_renderer_factory_nofilters(info):
+    return MakoRenderer(info, clear_default_filters=True)

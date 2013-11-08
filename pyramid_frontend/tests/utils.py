@@ -115,6 +115,8 @@ def make_app(settings=None, theme_strategy=None):
     config.add_route('js-tag', '/js-tag')
     config.add_route('css-tag', '/css-tag')
 
+    config.add_route('text-template', '/text-template')
+
     config.add_view(noop_view, route_name='index', renderer='index.html')
     config.add_view(noop_view, route_name='article', renderer='article.html')
 
@@ -130,6 +132,9 @@ def make_app(settings=None, theme_strategy=None):
 
     config.add_view(js_tag_view, route_name='js-tag', renderer='string')
     config.add_view(css_tag_view, route_name='css-tag', renderer='string')
+
+    config.add_view(noop_view, route_name='text-template',
+                    renderer='text-template.txt')
 
     if theme_strategy:
         config.set_theme_strategy(theme_strategy)

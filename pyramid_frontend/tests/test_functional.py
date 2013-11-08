@@ -40,6 +40,11 @@ class TestTemplatingFunctional(Functional):
         with self.assertRaises(MakoRenderingException):
             self.app.get('/bad-template')
 
+    def test_render_text_escaping(self):
+        resp = self.app.get('/text-template')
+        resp.mustcontain('should not be escaped: <foo>')
+        resp.mustcontain('should be escaped: &lt;foo&gt;')
+
 
 class TestThemeStrategy(Functional):
     def setUp(self):

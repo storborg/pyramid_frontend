@@ -8,7 +8,8 @@ from pyramid.decorator import reify
 from pyramid.settings import aslist
 
 from .templating.lookup import SuperTemplateLookup
-from .templating.renderer import MakoRenderer
+from .templating.renderer import (mako_renderer_factory,
+                                  mako_renderer_factory_nofilters)
 
 static_dir = pkg_resources.resource_filename('pyramid_frontend', 'static')
 
@@ -60,6 +61,14 @@ class Theme(object):
 
     @reify
     def lookup(self):
+        return self._make_lookup()
+
+    @reify
+    def lookup_nofilters(self):
+        return self._make_lookup(clear_default_filters=True)
+
+    def _make_lookup(self, clear_default_filters=False):
+        default_filters = [] if clear_default_filters else ['escape']
         template_imports = [
             'from webhelpers.html import escape',
         ]
@@ -70,7 +79,7 @@ class Theme(object):
                                    input_encoding='utf-8',
                                    output_encoding='utf-8',
                                    imports=template_imports,
-                                   default_filters=['escape'])
+                                   default_filters=default_filters)
 
     @reify
     def stacked_image_filters(self):
@@ -195,5 +204,5 @@ def includeme(config):
     config.add_directive('set_theme_strategy', set_theme_strategy)
     config.add_request_method(theme, 'theme', reify=True)
 
-    config.add_renderer(name='.html', factory=MakoRenderer)
-    config.add_renderer(name='.txt', factory=MakoRenderer)
+    config.add_renderer(name='.html', factory=mako_renderer_factory)
+    config.add_renderer(name='.txt', factory=mako_renderer_factory_nofilters)

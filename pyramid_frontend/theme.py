@@ -6,6 +6,7 @@ import pkg_resources
 
 from pyramid.decorator import reify
 from pyramid.settings import aslist
+from pyramid.path import DottedNameResolver
 
 from .templating.lookup import SuperTemplateLookup
 from .templating.renderer import (mako_renderer_factory,
@@ -25,6 +26,7 @@ class Theme(object):
     require_config_path = '/_pfe/require_config.js'
     require_path = '/_pfe/require.js'
     less_path = '/_pfe/less.js'
+    includes = []
 
     def __init__(self, settings):
         self.settings = settings
@@ -32,9 +34,6 @@ class Theme(object):
 
     def __repr__(self):
         return '<%s: %s>' % (self.__class__.__name__, self.key)
-
-    def includeme(self, config):
-        pass
 
     @classmethod
     def qualify_path(cls, path):
@@ -68,7 +67,7 @@ class Theme(object):
         return self._make_lookup(clear_default_filters=True)
 
     def _make_lookup(self, clear_default_filters=False):
-        default_filters = [] if clear_default_filters else ['escape']
+        default_filters = ['str'] if clear_default_filters else ['escape']
         template_imports = [
             'from webhelpers.html import escape',
         ]
@@ -97,6 +96,14 @@ class Theme(object):
         for key, class_dict in reversed(list(collected)):
             assets.update(class_dict)
         return assets
+
+    @reify
+    def stacked_includes(self):
+        includes = []
+        collected = self.__class__.traverse_attributes('includes')
+        for key, these in reversed(list(collected)):
+            includes.extend(these)
+        return includes
 
     @reify
     def keyed_static_dirs(self):
@@ -150,15 +157,25 @@ def add_theme(config, cls):
 
     settings = config.registry.settings
     theme = resolved_cls(settings)
-    theme.includeme(config)
+
+    # Call includes
+    package = inspect.getmodule(resolved_cls)
+    resolver = DottedNameResolver(package=package)
+    for include in theme.stacked_includes:
+        print("INCLUDING %r" % (include,))
+        config.include(resolver.maybe_resolve(include))
 
     # Register static dirs.
     static_dirs = settings.setdefault('pyramid_frontend.static_registry',
                                       set())
     for key, dir in theme.keyed_static_dirs:
+        print("REGISTERING key %r, dir %r" % (key, dir))
         if (key, dir) not in static_dirs:
+            print("  ADDING")
             static_dirs.add((key, dir))
             config.add_static_view('_%s' % key, path=dir)
+        else:
+            print("  SKIPPING")
 
     # Update global image filter registry as well, and ensure there are no
     # conflicts.

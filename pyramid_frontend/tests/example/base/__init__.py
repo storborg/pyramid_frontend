@@ -4,6 +4,11 @@ from pyramid_frontend.theme import Theme
 from pyramid_frontend.images.chain import FilterChain
 
 
+def base_includeme(config):
+    test_includes = config.registry.settings.setdefault('test_includes', [])
+    test_includes.append('base')
+
+
 class BaseTheme(Theme):
     key = 'base'
     image_filters = [
@@ -12,3 +17,6 @@ class BaseTheme(Theme):
     assets = {
         'main-less': ('/_base/css/main.less', 'less'),
     }
+    includes = [
+        base_includeme,
+    ]

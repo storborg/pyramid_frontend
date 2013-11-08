@@ -2,8 +2,10 @@ from __future__ import absolute_import, print_function, division
 
 from unittest import TestCase
 
+from pyramid import testing
 from pyramid_frontend.theme import Theme
 
+from . import utils
 from .example import base, foo, bar
 
 
@@ -81,3 +83,30 @@ class TestThemeStatic(TestCase):
     def test_static_override(self):
         self.assertEqual(self.foo.static('txt/sample.txt'),
                          '/_foo/txt/sample.txt')
+
+
+class TestIncludes(TestCase):
+    def setUp(self):
+        self.config = testing.setUp(settings=utils.default_settings)
+        self.config.include('pyramid_frontend')
+
+    def tearDown(self):
+        testing.tearDown()
+
+    def test_plain_include(self):
+        self.config.add_theme(base.BaseTheme)
+        settings = self.config.registry.settings
+        included = settings['test_includes']
+        self.assertEqual(included, ['base'])
+
+    def test_subclass_include(self):
+        self.config.add_theme(foo.FooTheme)
+        settings = self.config.registry.settings
+        included = settings['test_includes']
+        self.assertEqual(included, ['base', 'foo'])
+
+    def test_repeated_include(self):
+        self.config.add_theme(bar.BarTheme)
+        settings = self.config.registry.settings
+        included = settings['test_includes']
+        self.assertEqual(included, ['base'])

@@ -9,3 +9,6 @@ class BarTheme(BaseTheme):
     image_filters = [
         FilterChain('barthumb', width=300, height=100, crop=True),
     ]
+    includes = [
+        '..base.base_includeme',
+    ]

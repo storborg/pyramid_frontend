@@ -162,20 +162,15 @@ def add_theme(config, cls):
     package = inspect.getmodule(resolved_cls)
     resolver = DottedNameResolver(package=package)
     for include in theme.stacked_includes:
-        print("INCLUDING %r" % (include,))
         config.include(resolver.maybe_resolve(include))
 
     # Register static dirs.
     static_dirs = settings.setdefault('pyramid_frontend.static_registry',
                                       set())
     for key, dir in theme.keyed_static_dirs:
-        print("REGISTERING key %r, dir %r" % (key, dir))
         if (key, dir) not in static_dirs:
-            print("  ADDING")
             static_dirs.add((key, dir))
             config.add_static_view('_%s' % key, path=dir)
-        else:
-            print("  SKIPPING")
 
     # Update global image filter registry as well, and ensure there are no
     # conflicts.

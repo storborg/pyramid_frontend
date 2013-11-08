@@ -162,6 +162,14 @@ class TestImagesFunctional(Functional):
         with self.assertRaises(MissingOriginal):
             self.app.get('/img/%s/%s_jpg_thumb.png' % (prefix, name))
 
+    def test_fetch_image_legacy(self):
+        name = 'smiley-jpeg-rgb'
+        prefix = files.prefix_for_name(name)
+        resp = self.app.get('/img/%s/%s_thumb.png' % (prefix, name))
+        f = StringIO(resp.body)
+        im = Image.open(f)
+        self.assertEqual(im.size, (200, 200))
+
 
 class TestImagesDebug(Functional):
     def setUp(self):

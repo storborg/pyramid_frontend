@@ -3,6 +3,7 @@ from __future__ import absolute_import, print_function, division
 import os.path
 import mimetypes
 import pkg_resources
+import glob
 
 from pyramid.httpexceptions import HTTPNotFound
 from pyramid.response import Response
@@ -43,6 +44,13 @@ class ImageView(object):
 
         return response
 
+    def lookup_legacy_extension(self, name):
+        request = self.request
+        settings = request.registry.settings
+        matches = glob.glob(original_path(settings, name, '*'))
+        path = matches[0]
+        return path.rsplit('.', 1)[1]
+
     def __call__(self):
         request = self.request
         settings = request.registry.settings
@@ -52,7 +60,14 @@ class ImageView(object):
         name, ext = name.rsplit('.', 1)
 
         if filter_sep in name:
-            name, original_ext, chain_name = name.split(filter_sep, 2)
+            parts = name.split(filter_sep, 2)
+            if len(parts) == 3:
+                name, original_ext, chain_name = parts
+            else:
+                # XXX Legacy support for names w/o original ext
+                assert len(parts) == 2
+                name, chain_name = parts
+                original_ext = self.lookup_legacy_extension(name)
         else:
             original_ext = ext
             chain_name = None

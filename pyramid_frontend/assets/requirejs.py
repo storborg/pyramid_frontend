@@ -13,9 +13,10 @@ class RequireJSCompiler(Compiler):
     name = 'js'
 
     def compile(self, key, entry_point):
-        base_url = self.theme.static_url_to_filesystem_path('/_pfe/')
         main_config = self.theme.static_url_to_filesystem_path(
             self.theme.require_config_path)
+        base_url = self.theme.static_url_to_filesystem_path(
+            self.theme.require_base_url)
 
         if self.verbose:
             print("requirejs - base_url: %r" % base_url)
@@ -26,6 +27,11 @@ class RequireJSCompiler(Compiler):
         main = os.path.relpath(main_js_file, base_url)
         main = os.path.splitext(main)[0]  # Strip .js
 
+        almond_path = \
+            self.theme.static_url_to_filesystem_path('/_pfe/almond.js')
+        almond_path = os.path.relpath(almond_path, base_url)
+        almond_path = os.path.splitext(almond_path)[0]
+
         if self.verbose:
             print("requirejs - main: %r" % main)
 
@@ -34,7 +40,7 @@ class RequireJSCompiler(Compiler):
             'baseUrl={0}'.format(base_url),
             'mainConfigFile={0}'.format(main_config),
             'name={0}'.format(main),
-            'paths.requireLib=almond',
+            'paths.requireLib={0}'.format(almond_path),
             'include=requireLib',
         ]
 
@@ -43,9 +49,10 @@ class RequireJSCompiler(Compiler):
 
         # Add RequireJS paths for theme
         for dir_ref, dir in self.theme.keyed_static_dirs:
+            dir = os.path.join(dir, 'js')
             if self.verbose:
                 print("requirejs - path _%s - %s" % (key, dir))
-            cmd.append('paths._{}={}'.format(dir_ref, dir))
+            cmd.append('paths.{}={}'.format(dir_ref, dir))
 
         with self.tempfile() as (fd, temp_name):
             cmd.append('out={0}'.format(temp_name))

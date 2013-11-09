@@ -25,6 +25,7 @@ class Theme(object):
     image_filters = []
     require_config_path = '/_pfe/require_config.js'
     require_path = '/_pfe/require.js'
+    require_base_url = '/_pfe/'
     less_path = '/_pfe/less.js'
     includes = []
 

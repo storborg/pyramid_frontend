@@ -67,5 +67,4 @@ def includeme(config):
 
     compiled_path = \
         config.registry.settings['pyramid_frontend.compiled_asset_dir']
-    compiled_path = '/Users/scott/gallery/compiled/'
     config.add_static_view(name='compiled', path=compiled_path)

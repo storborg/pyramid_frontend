@@ -1,5 +1,6 @@
 from __future__ import absolute_import, print_function, division
 
+import re
 from unittest import TestCase
 from cStringIO import StringIO
 
@@ -94,11 +95,23 @@ class TestCompiledFunctional(Functional):
         resp2 = self.app.get('/js-tag')
         self.assertEqual(resp.body, resp2.body)
 
+        # Extract the filepath and load it.
+        m = re.search('src="([^\"]+)"', resp.body)
+        path = m.group(1)
+        file_resp = self.app.get(path)
+        self.assertGreater(len(file_resp.body), 0)
+
     def test_css_tag(self):
         resp = self.app.get('/css-tag')
         self.assertNotIn('less.js', resp.body)
         # Look for something that looks like a hex digest
         self.assertRegexpMatches(resp.body, '[a-f0-9]{8,}')
+
+        # Extract the filepath and load it.
+        m = re.search('href="([^\"]+)"', resp.body)
+        path = m.group(1)
+        file_resp = self.app.get(path)
+        self.assertGreater(len(file_resp.body), 0)
 
 
 class TestImagesFunctional(Functional):

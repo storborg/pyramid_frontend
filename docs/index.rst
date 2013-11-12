@@ -128,17 +128,22 @@ the filename resolve in the theme that is being inherited from.
 Image Filters
 ~~~~~~~~~~~~~
 
-An inheriting theme's image filters will layer on top of the superclass theme's image filters. If an image filter of the same name is specified, the child class will override the superclass.
+An inheriting theme's image filters will layer on top of the superclass theme's
+image filters. If an image filter of the same name is specified, the child
+class will override the superclass.
 
 Assets
 ~~~~~~
 
-An inheriting theme's asset entry points will layer on top of the super class theme's entry points. If an entry point of the same name is specified, the child class will override the superclass.
+An inheriting theme's asset entry points will layer on top of the super class
+theme's entry points. If an entry point of the same name is specified, the
+child class will override the superclass.
 
 Static Files
 ------------
 
-Each theme has exactly one static file directory. It will be served up at an underscore-prefixed path corresponding to the theme's key.
+Each theme has exactly one static file directory. It will be served up at an
+underscore-prefixed path corresponding to the theme's key.
 
 
 Asset Compilation
@@ -163,10 +168,6 @@ step does the following for each entry point in each theme:
 - Write the filename to a file with a path like
   ``<compiled asset dir>/<theme key>/<entry point>.map``.
 
-The following directories should be served up statically:
-
-    /assets - map to ``pyramid_frontend.compiled_asset_dir``
-    /_<theme key> - map to theme's static dir
 
 
 Code Standards

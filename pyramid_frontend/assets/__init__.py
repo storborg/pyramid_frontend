@@ -16,10 +16,29 @@ js_preamble = '''\
 '''
 
 
+js_paths = '''\
+<script>
+  require.paths
+</script>
+'''
+
+
+def render_js_paths(theme):
+    cls = theme.__class__
+    keys = []
+    while hasattr(cls, 'key'):
+        keys.append(cls.key)
+        cls = cls.__bases__[0]
+    lines = ["require.paths.%s = '/_%s/js';" % (key, key)
+             for key in keys]
+    return ''.join(['<script>'] + lines + ['</script>'])
+
+
 def requirejs_tag_development(url, theme):
     return ''.join([
         js_preamble,
         HTML.script(src=theme.require_config_path),
+        render_js_paths(theme),
         HTML.script(src=theme.require_path),
         HTML.script(src=url),
     ])

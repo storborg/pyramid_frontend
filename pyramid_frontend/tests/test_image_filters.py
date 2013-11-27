@@ -87,6 +87,16 @@ class TestFilters(TestCase):
         self.assertEqual(nm.mode, 'RGBA')
         self.assertEqual(nm.size, (25, 25))
 
+    def test_png_save_sharpen(self):
+        saver = filters.PNGSaver(sharpness=1.5)
+        im = Image.new('RGBA', (25, 25), 'white')
+        im.putpixel((10, 10), (255, 127, 127, 127))
+
+        f = saver(im)
+        nm = Image.open(f)
+        self.assertEqual(nm.mode, 'RGBA')
+        self.assertEqual(nm.getpixel((10, 10)), (255, 88, 88, 88))
+
     def test_file_save(self):
         saver = filters.PNGSaver()
         f = open(os.path.join(samples_dir, 'smiley-jpeg-rgb.jpg'))
@@ -171,6 +181,18 @@ class TestFilters(TestCase):
         nm = Image.open(f)
         self.assertEqual(nm.mode, 'RGB')
         self.assertEqual(nm.size, (25, 25))
+
+    def test_jpg_save_sharpen(self):
+        saver = filters.JPGSaver(sharpness=1.5)
+        im = Image.new('RGB', (30, 30), 'white')
+        rect = Image.new('RGB', (10, 10), (255, 0, 0))
+        im.paste(rect, (10, 10))
+
+        f = saver(im)
+        nm = Image.open(f)
+        self.assertEqual(nm.mode, 'RGB')
+        nm.show()
+        self.assertEqual(nm.getpixel((15, 15)), (254, 6, 0))
 
     def test_vignette_filter(self):
         im = Image.open(os.path.join(samples_dir, 'smiley-jpeg-rgb.jpg'))

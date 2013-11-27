@@ -2,7 +2,7 @@ from __future__ import absolute_import, print_function, division
 
 import math
 
-from PIL import Image, ImageChops
+from PIL import Image, ImageChops, ImageEnhance
 
 
 def flatten_alpha(im, background='white'):
@@ -151,3 +151,8 @@ def bounding_box(im, tolerance=0):
     diff = ImageChops.difference(im, bg)
     diff = ImageChops.add(diff, diff, 2.0, -tolerance)
     return diff.getbbox()
+
+
+def sharpen(im, sharpness):
+    sharpener = ImageEnhance.Sharpness(im)
+    return sharpener.enhance(sharpness)

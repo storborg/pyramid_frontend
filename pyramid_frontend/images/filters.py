@@ -9,7 +9,7 @@ from cStringIO import StringIO
 from PIL import Image
 
 from .utils import (pad_image, flatten_alpha, crop_entropy,
-                    is_white_background, is_larger, bounding_box)
+                    is_white_background, is_larger, bounding_box, sharpen)
 
 
 class Filter(object):
@@ -195,10 +195,13 @@ class JPGSaver(Filter):
     A JPG saver. Accepts keyword arguments, which will be passed to PIL's
     ``save()`` method. Calls jpegoptim on output.
     """
-    def __init__(self, **kwargs):
+    def __init__(self, sharpness=None, **kwargs):
+        self.sharpness = sharpness
         self.kwargs = kwargs
 
     def filter(self, im):
+        if self.sharpness:
+            im = sharpen(im, self.sharpness)
         if im.mode.endswith("A"):
             ni = Image.new("RGB", im.size, 'white')
             ni.paste(im, im)
@@ -227,12 +230,16 @@ class PNGSaver(Filter):
     Save a file as a 24-bit PNG and return the file-like object
     with PNG data.
     """
-    def __init__(self, palette=False, colors=256, background='white'):
+    def __init__(self, palette=False, colors=256, sharpness=None,
+                 background='white'):
         self.palette = palette
         self.colors = colors
         self.background = background
+        self.sharpness = sharpness
 
     def filter(self, im):
+        if self.sharpness:
+            im = sharpen(im, self.sharpness)
         buf = StringIO()
         if self.palette:
             if im.mode in ('RGBA', 'LA'):

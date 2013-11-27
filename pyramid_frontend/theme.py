@@ -38,7 +38,8 @@ class Theme(object):
 
     @classmethod
     def qualify_path(cls, path):
-        return os.path.join(os.path.dirname(inspect.getfile(cls)), path)
+        theme_file = os.path.abspath(inspect.getfile(cls))
+        return os.path.join(os.path.dirname(theme_file), path)
 
     @classmethod
     def traverse_attributes(cls, name, qualify_paths=False):

@@ -191,7 +191,6 @@ class TestFilters(TestCase):
         f = saver(im)
         nm = Image.open(f)
         self.assertEqual(nm.mode, 'RGB')
-        nm.show()
         self.assertEqual(nm.getpixel((15, 15)), (254, 6, 0))
 
     def test_vignette_filter(self):

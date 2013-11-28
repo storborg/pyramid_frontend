@@ -1,0 +1,3 @@
+foo theme unicode.txt
+
+this is unicode: ${u'\u2603'}

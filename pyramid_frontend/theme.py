@@ -69,7 +69,10 @@ class Theme(object):
         return self._make_lookup(clear_default_filters=True)
 
     def _make_lookup(self, clear_default_filters=False):
-        default_filters = ['str'] if clear_default_filters else ['escape']
+        default_filters = (['decode.utf8']
+                           if clear_default_filters else
+                           ['escape'])
+
         template_imports = [
             'from webhelpers.html import escape',
         ]

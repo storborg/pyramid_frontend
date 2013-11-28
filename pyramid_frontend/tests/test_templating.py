@@ -51,6 +51,20 @@ class TestThemeLookup(TestCase):
         with self.assertRaises(ValueError):
             theme.lookup.find_dir_for('/some/other/path.html')
 
+    def test_render_text(self):
+        theme = foo.FooTheme(self.settings)
+        templ = theme.lookup_nofilters.get_template('article.txt')
+        s = templ.render()
+        self.assertIn('foo theme article.txt', s)
+        self.assertIn('this should not be escaped: <>', s)
+
+    def test_render_text_unicode(self):
+        theme = foo.FooTheme(self.settings)
+        templ = theme.lookup_nofilters.get_template('unicode.txt')
+        s = templ.render()
+        self.assertIn('foo theme unicode.txt', s)
+        self.assertIn(u'this is unicode: \u2603'.encode('utf8'), s)
+
 
 class TestLookupOptions(TestCase):
     settings = {

@@ -22,7 +22,7 @@ def filesize(f):
 
 
 class TestFilters(TestCase):
-    def assertSimilarColor(self, a, b, threshold=5):
+    def assertSimilarColor(self, a, b, threshold=20):
         # Check manhattan distance
         if hasattr(a, '__len__'):
             dist = sum(abs(x - y) for x, y in zip(a, b))
@@ -158,7 +158,7 @@ class TestFilters(TestCase):
         f = saver(im)
         nm = Image.open(f)
         self.assertEqual(nm.mode, 'RGB')
-        self.assertEqual(nm.getpixel((15, 15)), (0, 255, 0))
+        self.assertSimilarColor(nm.getpixel((15, 15)), (0, 255, 0))
 
     def test_jpeg_save_monochrome(self):
         saver = filters.JPGSaver(quality=95)

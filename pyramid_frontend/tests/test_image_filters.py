@@ -22,6 +22,14 @@ def filesize(f):
 
 
 class TestFilters(TestCase):
+    def assertSimilarColor(self, a, b, threshold=5):
+        # Check manhattan distance
+        if hasattr(a, '__len__'):
+            dist = sum(abs(x - y) for x, y in zip(a, b))
+        else:
+            dist = abs(a - b)
+        self.assertLess(dist, threshold)
+
     def test_png_save_rgb(self):
         saver = filters.PNGSaver(palette=True)
         im = Image.new("RGB", (25, 25), "red")
@@ -163,7 +171,7 @@ class TestFilters(TestCase):
         self.assertEqual(nm.mode, 'RGB')
         self.assertEqual(nm.getpixel((15, 15)), (0, 0, 0))
 
-    def test_jpg_postprocess(self):
+    def test_jpeg_postprocess(self):
         saver = filters.JPGSaver()
         processor = filters.JPGProcessor()
         im = Image.new("RGB", (25, 25), (255, 0, 0))
@@ -182,7 +190,7 @@ class TestFilters(TestCase):
         self.assertEqual(nm.mode, 'RGB')
         self.assertEqual(nm.size, (25, 25))
 
-    def test_jpg_save_sharpen(self):
+    def test_jpeg_save_sharpen(self):
         saver = filters.JPGSaver(sharpness=1.5)
         im = Image.new('RGB', (30, 30), 'white')
         rect = Image.new('RGB', (10, 10), (255, 0, 0))
@@ -191,7 +199,7 @@ class TestFilters(TestCase):
         f = saver(im)
         nm = Image.open(f)
         self.assertEqual(nm.mode, 'RGB')
-        self.assertEqual(nm.getpixel((15, 15)), (254, 6, 0))
+        self.assertSimilarColor(nm.getpixel((15, 15)), (254, 6, 0))
 
     def test_vignette_filter(self):
         im = Image.open(os.path.join(samples_dir, 'smiley-jpeg-rgb.jpg'))

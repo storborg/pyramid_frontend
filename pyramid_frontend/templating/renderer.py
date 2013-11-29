@@ -4,7 +4,16 @@ import sys
 
 from mako import exceptions
 from pyramid.compat import reraise
-from pyramid.mako_templating import MakoRenderingException
+
+
+class MakoRenderingException(Exception):
+    def __init__(self, s):
+        self.s = s
+
+    def __repr__(self):
+        return self.s
+
+    __str__ = __repr__
 
 
 class MakoRenderer(object):

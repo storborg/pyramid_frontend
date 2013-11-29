@@ -5,12 +5,12 @@ from unittest import TestCase
 from cStringIO import StringIO
 
 from webtest import TestApp
-from pyramid.mako_templating import MakoRenderingException
 
 from PIL import Image
 
 from ..images import files
 from ..images.view import MissingOriginal
+from ..templating.renderer import MakoRenderingException
 
 from . import utils
 
@@ -38,8 +38,9 @@ class TestTemplatingFunctional(Functional):
             self.app.get('/bad-return')
 
     def test_render_bad_template(self):
-        with self.assertRaises(MakoRenderingException):
+        with self.assertRaises(MakoRenderingException) as e:
             self.app.get('/bad-template')
+        self.assertIn('dummy error', repr(e.exception))
 
     def test_render_text_escaping(self):
         resp = self.app.get('/text-template')

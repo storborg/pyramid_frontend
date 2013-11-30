@@ -61,6 +61,8 @@ class ImageView(object):
         request = self.request
         settings = request.registry.settings
         matches = glob.glob(original_path(settings, name, '*'))
+        if not matches:
+            raise HTTPNotFound()
         path = matches[0]
         return path.rsplit('.', 1)[1]
 

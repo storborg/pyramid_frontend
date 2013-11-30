@@ -13,6 +13,19 @@ from pyramid.settings import asbool
 from .files import filter_sep, prefix_for_name, processed_path, original_path
 
 
+plausible_extensions = set([
+    'jpg',
+    'jpeg',
+    'gif',
+    'png',
+    'tif',
+    'tiff',
+    'ppm',
+    'bmp',
+    'tga',
+])
+
+
 def get_image_filter(registry, filter_key):
     filter_registry = getattr(registry, 'image_filter_registry', {})
     chain, with_theme = filter_registry[filter_key]
@@ -79,6 +92,9 @@ class ImageView(object):
 
         if ((chain.extension and chain.extension != ext) or
                 prefix_for_name(name) != url_prefix):
+            raise HTTPNotFound()
+
+        if original_ext not in plausible_extensions:
             raise HTTPNotFound()
 
         proc_path = processed_path(settings, name, original_ext, chain)

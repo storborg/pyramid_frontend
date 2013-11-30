@@ -161,6 +161,12 @@ class TestImagesFunctional(Functional):
         self.app.get('/img/%s/%s_jpg_nonexistent.png' % (prefix, name),
                      status=404)
 
+    def test_fetch_image_bad_extension(self):
+        name = 'smiley-jpeg-rgb'
+        prefix = files.prefix_for_name(name)
+        self.app.get('/img/%s/%s_doc_thumb.png' % (prefix, name),
+                     status=404)
+
     def test_fetch_twice(self):
         name = 'smiley-jpeg-rgb'
         prefix = files.prefix_for_name(name)

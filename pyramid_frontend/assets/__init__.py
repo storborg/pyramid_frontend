@@ -45,7 +45,10 @@ def requirejs_tag_development(url, theme):
 
 
 def requirejs_tag_production(url, theme):
-    return HTML.script(src=url)
+    return ''.join([
+        js_preamble,
+        HTML.script(src=url),
+    ])
 
 
 def less_tag_development(url, theme):

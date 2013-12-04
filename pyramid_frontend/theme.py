@@ -213,7 +213,8 @@ def default_theme_strategy(request):
 
 def theme(request):
     registry = request.registry
-    key = registry.pfe_theme_strategy(request)
+    strategy = getattr(registry, 'pfe_theme_strategy', default_theme_strategy)
+    key = strategy(request)
     settings = registry.settings
     themes = settings.setdefault('pyramid_frontend.theme_registry', {})
     return themes[key]
@@ -222,9 +223,9 @@ def theme(request):
 def includeme(config):
     config.include('.images')
     config.include('.assets')
+
     config.add_directive('add_theme', add_theme)
     config.add_directive('set_theme_strategy', set_theme_strategy)
-    config.set_theme_strategy(default_theme_strategy)
 
     config.add_request_method(theme, 'theme', reify=True)
 

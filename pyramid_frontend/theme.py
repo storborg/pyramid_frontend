@@ -199,17 +199,22 @@ def add_theme(config, cls):
 
 
 def set_theme_strategy(config, strategy_func):
-    settings = config.registry.settings
-    settings['pyramid_frontend.theme_strategy'] = strategy_func
+    def register():
+        registry = config.registry
+        registry.pfe_theme_strategy = strategy_func
+
+    config.action(('theme_strategy',), register)
 
 
-def theme(self):
-    settings = self.registry.settings
-    strategy = settings.get('pyramid_frontend.theme_strategy')
-    if strategy:
-        key = strategy(self)
-    else:
-        key = settings['pyramid_frontend.theme']
+def default_theme_strategy(request):
+    settings = request.registry.settings
+    return settings['pyramid_frontend.theme']
+
+
+def theme(request):
+    registry = request.registry
+    key = registry.pfe_theme_strategy(request)
+    settings = registry.settings
     themes = settings.setdefault('pyramid_frontend.theme_registry', {})
     return themes[key]
 
@@ -219,6 +224,8 @@ def includeme(config):
     config.include('.assets')
     config.add_directive('add_theme', add_theme)
     config.add_directive('set_theme_strategy', set_theme_strategy)
+    config.set_theme_strategy(default_theme_strategy)
+
     config.add_request_method(theme, 'theme', reify=True)
 
     config.add_renderer(name='.html', factory=mako_renderer_factory)

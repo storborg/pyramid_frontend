@@ -190,6 +190,9 @@ class TestImagesFunctional(Functional):
         im = Image.open(f)
         self.assertEqual(im.size, (200, 200))
 
+    def test_fetch_image_legacy_bad(self):
+        self.app.get('/img/abcd/bad_filename.jpg', status=404)
+
 
 class TestImagesDebug(Functional):
     def setUp(self):

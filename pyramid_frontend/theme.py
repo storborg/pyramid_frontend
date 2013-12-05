@@ -156,9 +156,7 @@ class Theme(object):
                 return '/_%s/%s' % (key, path)
         raise IOError('path %r does not exist in any static dirs' % path)
 
-    def compile(self, minify=True, verbose=False):
-        if verbose:
-            print("Compiling theme: %s" % self.key)
+    def compile(self, minify=True):
         output_dir = os.path.join(
             self.settings['pyramid_frontend.compiled_asset_dir'],
             self.key)
@@ -168,7 +166,7 @@ class Theme(object):
         }
         for key, (entry_point, asset_type) in self.stacked_assets.iteritems():
             cls = compilers[asset_type]
-            compiler = cls(self, output_dir, minify=minify, verbose=verbose)
+            compiler = cls(self, output_dir, minify=minify)
             compiler.compile(key, entry_point)
 
 

@@ -1,8 +1,12 @@
 from __future__ import absolute_import, print_function, division
 
+import logging
+
 import os
 
 from .compiler import Compiler
+
+log = logging.getLogger(__name__)
 
 
 class RequireJSCompiler(Compiler):
@@ -18,9 +22,8 @@ class RequireJSCompiler(Compiler):
         base_url = self.theme.static_url_to_filesystem_path(
             self.theme.require_base_url)
 
-        if self.verbose:
-            print("requirejs - base_url: %r" % base_url)
-            print("requirejs - main_config: %r" % main_config)
+        log.debug("base_url: %r", base_url)
+        log.debug("main_config: %r", main_config)
 
         # Path to main module relative to baseUrl (can't be absolute)
         main_js_file = self.theme.static_url_to_filesystem_path(entry_point)
@@ -32,8 +35,7 @@ class RequireJSCompiler(Compiler):
         almond_path = os.path.relpath(almond_path, base_url)
         almond_path = os.path.splitext(almond_path)[0]
 
-        if self.verbose:
-            print("requirejs - main: %r" % main)
+        log.debug("main: %r", main)
 
         cmd = [
             'r.js', '-o',
@@ -50,8 +52,7 @@ class RequireJSCompiler(Compiler):
         # Add RequireJS paths for theme
         for dir_ref, dir in self.theme.keyed_static_dirs:
             dir = os.path.join(dir, 'js')
-            if self.verbose:
-                print("requirejs - path _%s - %s" % (key, dir))
+            log.debug("path _%s -> %s", key, dir)
             cmd.append('paths.{}={}'.format(dir_ref, dir))
 
         with self.tempfile() as (fd, temp_name):

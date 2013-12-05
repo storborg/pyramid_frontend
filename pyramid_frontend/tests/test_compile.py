@@ -34,11 +34,6 @@ class TestCompileCommand(TestCase):
         retcode = compile.main(args)
         self.assertEqual(retcode, 0)
 
-    def test_pcompile_verbose(self):
-        args = ['pcompile', utils.test_ini_path, '--verbose']
-        retcode = compile.main(args)
-        self.assertEqual(retcode, 0)
-
     def test_pcompile_no_minify(self):
         args = ['pcompile', utils.test_ini_path, '--no-minify']
         retcode = compile.main(args)
@@ -53,13 +48,15 @@ class TestCompiler(TestCase):
 
     def test_bad_shell(self):
         compiler = Compiler(None, '.')
-        with self.assertRaises(subprocess.CalledProcessError):
-            argv = [
-                'false',
-            ]
-            compiler.run_command(argv)
-            # XXX Try to test that this actually prints the stdout output of a
-            # failed comamnd.
+        buf = StringIO()
+        with patch('sys.stdout', buf):
+            with self.assertRaises(subprocess.CalledProcessError):
+                argv = [
+                    'false',
+                ]
+                compiler.run_command(argv)
+        # XXX Try to test that this actually prints the stdout output of a
+        # failed comamnd.
 
     def test_less_compile(self):
         compiler = LessCompiler(self.theme, self.output_dir)

@@ -1,27 +1,80 @@
 from __future__ import absolute_import, print_function, division
 
+import logging
+
 import argparse
 import sys
 
 from pyramid.paster import bootstrap
 
 
-def compile(registry, minify=True, verbose=False):
+def compile(registry, log, minify=True):
     settings = registry.settings
     theme_registry = settings['pyramid_frontend.theme_registry']
-    for theme in theme_registry.itervalues():
-        theme.compile(minify=minify, verbose=verbose)
+    themes = theme_registry.values()
+    count = len(themes)
+    for ii, theme in enumerate(themes):
+        log.info("%d / %d - Compiling theme: %s", ii, count, theme.key)
+        theme.compile(minify=minify)
+
+
+class ConsoleHandler(logging.StreamHandler):
+    """
+    A subclass of StreamHandler which behaves in the exact same way, but
+    colorizes the log level before formatting it.
+    """
+
+    colors = {'CRITICAL': '[1;31m',
+              'ERROR':    '[1;31m',
+              'WARNING':  '[1;33m',
+              'INFO':     '[1;32m',
+              'DEBUG':    '[1;37m',
+              None:    '[0m'}
+
+    def emit(self, record):
+        """
+        Emit a record.
+
+        If a formatter is specified, it is used to format the record, but
+        before the formatter is applied the loglevel is colored.
+        """
+
+        record.colored_levelname = (self.colors[record.levelname] +
+                                    record.levelname +
+                                    self.colors[None])
+        sys.stdout.write(self.format(record) + '\n')
+
+
+def configure_logging(verbosity):
+    levels = [logging.CRITICAL,
+              logging.ERROR,
+              logging.WARNING,
+              logging.INFO,
+              logging.DEBUG]
+
+    ch = ConsoleHandler()
+    ch.setLevel(levels[verbosity])
+
+    formatter = logging.Formatter(
+        '%(asctime)s %(colored_levelname)s %(name)s - %(message)s')
+    ch.setFormatter(formatter)
+
+    log = logging.getLogger('pyramid_frontend')
+    log.setLevel(logging.DEBUG)
+    log.addHandler(ch)
+    return log
 
 
 def main(args=sys.argv):
     parser = argparse.ArgumentParser(description='Compile static assets.')
     parser.add_argument('--no-minify', action='store_true', default=False)
-    parser.add_argument('--verbose', action='store_true', default=False)
+    parser.add_argument('-v', '--verbose', action='count', default=2)
     parser.add_argument('config_uri')
 
     options = parser.parse_args(args[1:])
 
+    log = configure_logging(options.verbose)
     env = bootstrap(options.config_uri)
     registry = env['registry']
-    compile(registry, minify=(not options.no_minify), verbose=options.verbose)
+    compile(registry, log, minify=(not options.no_minify))
     return 0

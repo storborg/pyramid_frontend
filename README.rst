@@ -17,6 +17,8 @@ Command line tools:
 * Compile assets (in addition to a programmatic method for integrating with
   other build steps)
 
+Extensive documentation is `hosted at Read the Docs <http://pyramid-frontend.readthedocs.org/en/latest/>`_.
+
 
 Installation
 ============

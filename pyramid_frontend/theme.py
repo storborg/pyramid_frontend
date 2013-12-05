@@ -11,6 +11,9 @@ from pyramid.path import DottedNameResolver
 from .templating.lookup import SuperTemplateLookup
 from .templating.renderer import (mako_renderer_factory,
                                   mako_renderer_factory_nofilters)
+from .assets.requirejs import RequireJSCompiler
+from .assets.less import LessCompiler
+
 
 static_dir = pkg_resources.resource_filename('pyramid_frontend', 'static')
 
@@ -152,6 +155,21 @@ class Theme(object):
             if os.path.exists(os.path.join(static_dir, path)):
                 return '/_%s/%s' % (key, path)
         raise IOError('path %r does not exist in any static dirs' % path)
+
+    def compile(self, minify=True, verbose=False):
+        if verbose:
+            print("Compiling theme: %s" % self.key)
+        output_dir = os.path.join(
+            self.settings['pyramid_frontend.compiled_asset_dir'],
+            self.key)
+        compilers = {
+            'requirejs': RequireJSCompiler,
+            'less': LessCompiler,
+        }
+        for key, (entry_point, asset_type) in self.stacked_assets.iteritems():
+            cls = compilers[asset_type]
+            compiler = cls(self, output_dir, minify=minify, verbose=verbose)
+            compiler.compile(key, entry_point)
 
 
 def add_theme(config, cls):

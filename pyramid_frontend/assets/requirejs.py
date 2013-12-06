@@ -108,6 +108,8 @@ class RequireJSCompiler(Compiler):
         """
         Return an HTML fragment to use a require.js entry point in production.
         """
+        # FIXME Include the js preamble in the minified file itself, so it
+        # doesn't have to be added to each tag fragment.
         return ''.join([
             js_preamble,
             HTML.script(src=url),

@@ -26,6 +26,8 @@ def asset_tag(request, key, **kwargs):
     should_compile = asbool(settings.get('pyramid_frontend.compile_%s' %
                                          asset_type))
 
+    # FIXME Memoize compiler instances for this? Or maybe turn tag functions
+    # into hybrid class/instance methods?
     cls = compiler_classes[asset_type]
     compiler = cls(theme)
 

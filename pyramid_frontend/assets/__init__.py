@@ -3,6 +3,9 @@ from __future__ import absolute_import, print_function, division
 from webhelpers.html.tags import HTML, literal
 from pyramid.settings import asbool
 
+from .requirejs import RequireJSCompiler
+from .less import LessCompiler
+
 
 js_preamble = '''\
 <script>
@@ -21,6 +24,12 @@ js_paths = '''\
   require.paths
 </script>
 '''
+
+
+compiler_classes = {
+    'requirejs': RequireJSCompiler,
+    'less': LessCompiler,
+}
 
 
 def render_js_paths(theme):
@@ -103,6 +112,12 @@ def asset_tag(request, key, **kwargs):
         filename = theme.compiled_asset_path(key)
         url_path = '/compiled/' + theme.key + '/' + filename
     return literal(tag_func(url_path, theme))
+
+
+def compile_asset(theme, output_dir, key, entry_point, asset_type, minify):
+    cls = compiler_classes[asset_type]
+    compiler = cls(theme, output_dir, minify=minify)
+    compiler.compile(key, entry_point)
 
 
 def includeme(config):

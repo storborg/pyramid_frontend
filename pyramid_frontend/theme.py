@@ -11,8 +11,7 @@ from pyramid.path import DottedNameResolver
 from .templating.lookup import SuperTemplateLookup
 from .templating.renderer import (mako_renderer_factory,
                                   mako_renderer_factory_nofilters)
-from .assets.requirejs import RequireJSCompiler
-from .assets.less import LessCompiler
+from . import assets
 
 
 static_dir = pkg_resources.resource_filename('pyramid_frontend', 'static')
@@ -108,11 +107,11 @@ class Theme(object):
 
     @reify
     def stacked_assets(self):
-        assets = {}
+        asset_specs = {}
         collected = self.__class__.traverse_attributes('assets')
         for key, class_dict in reversed(list(collected)):
-            assets.update(class_dict)
-        return assets
+            asset_specs.update(class_dict)
+        return asset_specs
 
     @reify
     def stacked_includes(self):
@@ -169,14 +168,13 @@ class Theme(object):
         output_dir = os.path.join(
             self.settings['pyramid_frontend.compiled_asset_dir'],
             self.key)
-        compilers = {
-            'requirejs': RequireJSCompiler,
-            'less': LessCompiler,
-        }
         for key, (entry_point, asset_type) in self.stacked_assets.iteritems():
-            cls = compilers[asset_type]
-            compiler = cls(self, output_dir, minify=minify)
-            compiler.compile(key, entry_point)
+            assets.compile_asset(theme=self,
+                                 output_dir=output_dir,
+                                 key=key,
+                                 entry_point=entry_point,
+                                 asset_type=asset_type,
+                                 minify=minify)
 
 
 def add_theme(config, cls):

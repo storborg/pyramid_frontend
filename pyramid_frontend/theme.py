@@ -22,6 +22,15 @@ default_sentinel = object()
 
 
 class Theme(object):
+    """
+    Represents a collection of templates, static files, image filters, and
+    configuration corresponding to a particular visual theme (or "skin") used
+    by the application.
+
+    New themes are created by subclassing from this class. When passed to
+    ``config.add_theme()``, The subclass will be instantiated with the
+    application's ``settings`` dict and prepared for use.
+    """
     template_dir = 'templates'
     static_dir = 'static'
     assets = {}
@@ -172,7 +181,7 @@ class Theme(object):
 
 def add_theme(config, cls):
     """
-    Initialize and register a theme for use.
+    A Pyramid config directive to initialiaze and register a theme for use.
     """
     resolved_cls = config.maybe_dotted(cls)
 
@@ -215,6 +224,10 @@ def add_theme(config, cls):
 
 
 def set_theme_strategy(config, strategy_func):
+    """
+    A Pyramid config directive to set a customized theme-selection strategy for
+    each request.
+    """
     def register():
         registry = config.registry
         registry.pfe_theme_strategy = strategy_func
@@ -223,11 +236,19 @@ def set_theme_strategy(config, strategy_func):
 
 
 def default_theme_strategy(request):
+    """
+    The default theme selection strategy: just checks the
+    ``pyramid_frontend.theme`` settings key.
+    """
     settings = request.registry.settings
     return settings['pyramid_frontend.theme']
 
 
 def theme(request):
+    """
+    The theme instance that should be used for this request. This property is
+    both lazily-evaluated and reified.
+    """
     registry = request.registry
     strategy = getattr(registry, 'pfe_theme_strategy', default_theme_strategy)
     key = strategy(request)

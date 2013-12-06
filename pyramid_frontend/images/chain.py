@@ -22,7 +22,10 @@ postprocessors = {
 
 
 class FilterChain(object):
-
+    """
+    A chain of image filters (a.k.a. "pipeline") used to process images for a
+    particular display context.
+    """
     def __init__(self, suffix, filters=(), extension='png',
                  width=None, height=None, no_thumb=False,
                  pad=False, crop=False, crop_whitespace=False,
@@ -87,7 +90,10 @@ class FilterChain(object):
 
 
 class PassThroughFilterChain(FilterChain):
-
+    """
+    A filter chain which does not do any manipulation, only applies lossless
+    optimization tools.
+    """
     def __init__(self, suffix=None, filters=()):
         self.suffix = suffix
         self.extension = None

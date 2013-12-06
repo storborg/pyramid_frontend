@@ -24,6 +24,10 @@ js_paths = '''\
 
 
 def render_js_paths(theme):
+    """
+    Return a script tag for use client-side which sets up require.js paths for
+    all theme directories in use by the supplied theme.
+    """
     cls = theme.__class__
     keys = []
     while hasattr(cls, 'key'):
@@ -35,6 +39,9 @@ def render_js_paths(theme):
 
 
 def requirejs_tag_development(url, theme):
+    """
+    Return an HTML fragment to use a require.js entry point in development.
+    """
     return ''.join([
         js_preamble,
         HTML.script(src=theme.require_config_path),
@@ -45,6 +52,9 @@ def requirejs_tag_development(url, theme):
 
 
 def requirejs_tag_production(url, theme):
+    """
+    Return an HTML fragment to use a require.js entry point in production.
+    """
     return ''.join([
         js_preamble,
         HTML.script(src=url),
@@ -52,6 +62,9 @@ def requirejs_tag_production(url, theme):
 
 
 def less_tag_development(url, theme):
+    """
+    Return an HTML fragment to use a less CSS entry point in development.
+    """
     return ''.join([
         HTML.link(rel='stylesheet/less', type='text/css', href=url),
         HTML.script(src=theme.less_path),
@@ -59,6 +72,9 @@ def less_tag_development(url, theme):
 
 
 def less_tag_production(url, theme):
+    """
+    Return an HTML fragment to use a less CSS entry point in production.
+    """
     return HTML.link(rel='stylesheet', type='text/css', href=url)
 
 
@@ -71,6 +87,11 @@ tag_map = {
 
 
 def asset_tag(request, key, **kwargs):
+    """
+    Request method to render an HTML fragment containing tags which reference
+    the supplied entry point. This will dispatch to the appropriate tag
+    rendering function based on context and entry point type.
+    """
     theme = request.theme
     assets = theme.stacked_assets
     url_path, asset_type = assets[key]

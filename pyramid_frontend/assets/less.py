@@ -7,12 +7,17 @@ from .compiler import Compiler
 
 
 class LessCompiler(Compiler):
-
+    """
+    Compiler for LESS CSS files.
+    """
     name = 'css'
 
     import_re = re.compile(r'@import[ ]+"(?P<path>.*)";')
 
     def compile(self, key, entry_point):
+        """
+        Compile a LESS entry point.
+        """
         entry_point = self.theme.static_url_to_filesystem_path(entry_point)
 
         lessc_flags = []
@@ -31,7 +36,11 @@ class LessCompiler(Compiler):
         return file_path
 
     def concatenate(self, start_path):
-        """Concatenate a file and its `@import`s, recursively."""
+        """
+        Combine a LESS file and its `@import`s, recursively. Used to keep
+        the ``lessc`` command-line compiler from having to traverse a directory
+        structure, which it doesn't support very well right now.
+        """
         err = 'File does not exist {0}'.format(start_path)
         assert os.path.isfile(start_path), err
         contents = []

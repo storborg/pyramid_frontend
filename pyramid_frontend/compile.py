@@ -9,6 +9,9 @@ from pyramid.paster import bootstrap
 
 
 def compile(registry, log, minify=True):
+    """
+    Compile static assets for all themes which are registered in ``registry``.
+    """
     settings = registry.settings
     theme_registry = settings['pyramid_frontend.theme_registry']
     themes = theme_registry.values()

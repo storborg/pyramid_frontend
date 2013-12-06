@@ -11,7 +11,7 @@ log = logging.getLogger(__name__)
 
 class RequireJSCompiler(Compiler):
     """
-    Compile JavaScript for theme. Assumes r.js is on $PATH.
+    Compile require.js javascript for theme. Assumes r.js is on $PATH.
     """
 
     name = 'js'

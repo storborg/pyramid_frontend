@@ -14,6 +14,12 @@ log = logging.getLogger(__name__)
 
 
 class Compiler(object):
+    """
+    Generic superclass for compilers of specific asset types. This class
+    contains generic helper functions for compiling assets, and is subclassed
+    to provide compilation functionality that is specific to certain asset
+    types.
+    """
 
     def __init__(self, theme, output_dir, minify=True):
         self.theme = theme
@@ -21,9 +27,13 @@ class Compiler(object):
         self.minify = minify
 
     def run_command(self, argv):
+        """
+        Run a shell command, and check the output.
+        """
         log.debug('Running command: %s ...', ' '.join(argv))
         start_time = time.time()
         try:
+            # FIXME Should this really be capturing stderr to stdout?
             subprocess.check_output(argv, stderr=subprocess.STDOUT)
         except subprocess.CalledProcessError as e:
             log.error(e.output)
@@ -32,6 +42,10 @@ class Compiler(object):
         log.debug('Command completed in %0.4f seconds.', elapsed_time)
 
     def write(self, key, contents, entry_point):
+        """
+        Write the compiled result for a particular entry point to the
+        appropriate file and map file.
+        """
         log.debug('Write - key: %r, entry_point: %r', key, entry_point)
         hash = sha1(contents).hexdigest()
 
@@ -55,12 +69,19 @@ class Compiler(object):
         return file_path
 
     def write_from_file(self, key, file_name, entry_point):
+        """
+        Like ``write()``, but writes from a source file instead of a buffer
+        variable.
+        """
         with open(file_name) as f:
             contents = f.read()
         return self.write(key, contents, entry_point)
 
     @contextmanager
     def tempfile(self, *args, **kwargs):
+        """
+        A context manager helper to generate a temporary file for quick use.
+        """
         fd, name = tempfile.mkstemp(*args, **kwargs)
         try:
             yield fd, name

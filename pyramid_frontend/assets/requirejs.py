@@ -23,13 +23,6 @@ js_preamble = '''\
 '''
 
 
-js_paths = '''\
-<script>
-  require.paths
-</script>
-'''
-
-
 def render_js_paths(theme):
     """
     Return a script tag for use client-side which sets up require.js paths for

@@ -86,3 +86,9 @@ class Compiler(object):
         finally:
             os.close(fd)
             os.remove(name)
+
+    def tag(self, url, production=True):
+        if production:
+            return self.tag_production(url)
+        else:
+            return self.tag_development(url)

@@ -4,9 +4,45 @@ import logging
 
 import os
 
+from webhelpers.html.tags import HTML
+
 from .compiler import Compiler
 
 log = logging.getLogger(__name__)
+
+
+js_preamble = '''\
+<script>
+  if (typeof console === 'undefined') {
+    console = {
+      log: function () {},
+      debug: function () {}
+    }
+  }
+</script>
+'''
+
+
+js_paths = '''\
+<script>
+  require.paths
+</script>
+'''
+
+
+def render_js_paths(theme):
+    """
+    Return a script tag for use client-side which sets up require.js paths for
+    all theme directories in use by the supplied theme.
+    """
+    cls = theme.__class__
+    keys = []
+    while hasattr(cls, 'key'):
+        keys.append(cls.key)
+        cls = cls.__bases__[0]
+    lines = ["require.paths.%s = '/_%s/js';" % (key, key)
+             for key in keys]
+    return ''.join(['<script>'] + lines + ['</script>'])
 
 
 class RequireJSCompiler(Compiler):
@@ -62,3 +98,24 @@ class RequireJSCompiler(Compiler):
                                              output_dir)
 
         return file_path
+
+    def tag_development(self, url):
+        """
+        Return an HTML fragment to use a require.js entry point in development.
+        """
+        return ''.join([
+            js_preamble,
+            HTML.script(src=self.theme.require_config_path),
+            render_js_paths(self.theme),
+            HTML.script(src=self.theme.require_path),
+            HTML.script(src=url),
+        ])
+
+    def tag_production(self, url):
+        """
+        Return an HTML fragment to use a require.js entry point in production.
+        """
+        return ''.join([
+            js_preamble,
+            HTML.script(src=url),
+        ])

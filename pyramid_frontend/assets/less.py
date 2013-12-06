@@ -3,6 +3,8 @@ from __future__ import absolute_import, print_function, division
 import os
 import re
 
+from webhelpers.html.tags import HTML
+
 from .compiler import Compiler
 
 
@@ -62,3 +64,18 @@ class LessCompiler(Compiler):
                 else:
                     contents.append(line)
         return ''.join(contents)
+
+    def tag_development(self, url):
+        """
+        Return an HTML fragment to use a less CSS entry point in development.
+        """
+        return ''.join([
+            HTML.link(rel='stylesheet/less', type='text/css', href=url),
+            HTML.script(src=self.theme.less_path),
+        ])
+
+    def tag_production(self, url):
+        """
+        Return an HTML fragment to use a less CSS entry point in production.
+        """
+        return HTML.link(rel='stylesheet', type='text/css', href=url)

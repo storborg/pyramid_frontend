@@ -21,10 +21,8 @@ class Compiler(object):
     types.
     """
 
-    def __init__(self, theme, output_dir, minify=True):
+    def __init__(self, theme):
         self.theme = theme
-        self.output_dir = output_dir
-        self.minify = minify
 
     def run_command(self, argv):
         """
@@ -41,7 +39,7 @@ class Compiler(object):
         elapsed_time = time.time() - start_time
         log.debug('Command completed in %0.4f seconds.', elapsed_time)
 
-    def write(self, key, contents, entry_point):
+    def write(self, key, contents, entry_point, output_dir):
         """
         Write the compiled result for a particular entry point to the
         appropriate file and map file.
@@ -52,30 +50,30 @@ class Compiler(object):
         name = os.path.basename(entry_point)
         file_name = '{name}-{hash}.{ext}'.format(
             name=name, hash=hash, ext=self.name)
-        file_path = os.path.join(self.output_dir, file_name)
+        file_path = os.path.join(output_dir, file_name)
 
-        if not os.path.isdir(self.output_dir):
-            os.makedirs(self.output_dir)
+        if not os.path.isdir(output_dir):
+            os.makedirs(output_dir)
 
         log.debug('Writing to %s ...', file_path)
         with open(file_path, 'wb') as f:
             f.write(contents)
 
-        map_path = os.path.join(self.output_dir, key + '.map')
+        map_path = os.path.join(output_dir, key + '.map')
         log.debug('Writing map file to %s ...', map_path)
         with open(map_path, 'w') as f:
             f.write(file_name)
 
         return file_path
 
-    def write_from_file(self, key, file_name, entry_point):
+    def write_from_file(self, key, file_name, entry_point, output_dir):
         """
         Like ``write()``, but writes from a source file instead of a buffer
         variable.
         """
         with open(file_name) as f:
             contents = f.read()
-        return self.write(key, contents, entry_point)
+        return self.write(key, contents, entry_point, output_dir)
 
     @contextmanager
     def tempfile(self, *args, **kwargs):

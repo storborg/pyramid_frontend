@@ -47,7 +47,7 @@ class TestCompiler(TestCase):
         self.output_dir = os.path.join(utils.work_dir, 'compile-tests')
 
     def test_bad_shell(self):
-        compiler = Compiler(None, '.')
+        compiler = Compiler(None)
         buf = StringIO()
         with patch('sys.stdout', buf):
             with self.assertRaises(subprocess.CalledProcessError):
@@ -59,30 +59,33 @@ class TestCompiler(TestCase):
         # failed comamnd.
 
     def test_less_compile(self):
-        compiler = LessCompiler(self.theme, self.output_dir)
-        path = compiler.compile('main-less', '/_foo/css/main.less')
+        compiler = LessCompiler(self.theme)
+        path = compiler.compile('main-less', '/_foo/css/main.less',
+                                self.output_dir)
         f = open(path, 'rb')
         buf_minified = f.read()
         self.assertGreater(len(buf_minified), 0)
 
         # Test that minified version is smaller than non-minified.
-        compiler = LessCompiler(self.theme, self.output_dir, minify=False)
-        path = compiler.compile('main-less', '/_foo/css/main.less')
+        compiler = LessCompiler(self.theme)
+        path = compiler.compile('main-less', '/_foo/css/main.less',
+                                self.output_dir, minify=False)
         f = open(path, 'rb')
         buf_unminified = f.read()
 
         self.assertLess(len(buf_minified), len(buf_unminified))
 
     def test_requirejs_compile(self):
-        compiler = RequireJSCompiler(self.theme, self.output_dir)
-        path = compiler.compile('main-js', '/_foo/js/main.js')
+        compiler = RequireJSCompiler(self.theme)
+        path = compiler.compile('main-js', '/_foo/js/main.js', self.output_dir)
         f = open(path, 'rb')
         buf_minified = f.read()
         self.assertGreater(len(buf_minified), 0)
 
         # Test that minified version is smaller than non-minified.
-        compiler = RequireJSCompiler(self.theme, self.output_dir, minify=False)
-        path = compiler.compile('main-js', '/_foo/js/main.js')
+        compiler = RequireJSCompiler(self.theme)
+        path = compiler.compile('main-js', '/_foo/js/main.js', self.output_dir,
+                                minify=False)
         f = open(path, 'rb')
         buf_unminified = f.read()
 

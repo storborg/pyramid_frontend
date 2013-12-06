@@ -14,7 +14,7 @@ class LessCompiler(Compiler):
 
     import_re = re.compile(r'@import[ ]+"(?P<path>.*)";')
 
-    def compile(self, key, entry_point):
+    def compile(self, key, entry_point, output_dir, minify=True):
         """
         Compile a LESS entry point.
         """
@@ -22,7 +22,7 @@ class LessCompiler(Compiler):
 
         lessc_flags = []
         lessc_flags.append('--verbose')
-        if self.minify:
+        if minify:
             lessc_flags.append('--compress')
 
         with self.tempfile() as (in_fd, in_name):
@@ -31,7 +31,8 @@ class LessCompiler(Compiler):
             with self.tempfile() as (out_fd, out_name):
                 cmd.append(out_name)
                 self.run_command(cmd)
-                file_path = self.write_from_file(key, out_name, entry_point)
+                file_path = self.write_from_file(key, out_name, entry_point,
+                                                 output_dir)
 
         return file_path
 

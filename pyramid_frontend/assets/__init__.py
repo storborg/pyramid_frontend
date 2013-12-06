@@ -116,8 +116,11 @@ def asset_tag(request, key, **kwargs):
 
 def compile_asset(theme, output_dir, key, entry_point, asset_type, minify):
     cls = compiler_classes[asset_type]
-    compiler = cls(theme, output_dir, minify=minify)
-    compiler.compile(key, entry_point)
+    compiler = cls(theme)
+    compiler.compile(key=key,
+                     entry_point=entry_point,
+                     output_dir=output_dir,
+                     minify=minify)
 
 
 def includeme(config):

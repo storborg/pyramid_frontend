@@ -16,7 +16,7 @@ class RequireJSCompiler(Compiler):
 
     name = 'js'
 
-    def compile(self, key, entry_point):
+    def compile(self, key, entry_point, output_dir, minify=True):
         main_config = self.theme.static_url_to_filesystem_path(
             self.theme.require_config_path)
         base_url = self.theme.static_url_to_filesystem_path(
@@ -46,7 +46,7 @@ class RequireJSCompiler(Compiler):
             'include=requireLib',
         ]
 
-        if not self.minify:
+        if not minify:
             cmd.append('optimize=none')
 
         # Add RequireJS paths for theme
@@ -58,6 +58,7 @@ class RequireJSCompiler(Compiler):
         with self.tempfile() as (fd, temp_name):
             cmd.append('out={0}'.format(temp_name))
             self.run_command(cmd)
-            file_path = self.write_from_file(key, temp_name, entry_point)
+            file_path = self.write_from_file(key, temp_name, entry_point,
+                                             output_dir)
 
         return file_path

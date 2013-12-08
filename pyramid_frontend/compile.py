@@ -8,10 +8,11 @@ import sys
 from pyramid.paster import bootstrap
 
 
-def compile(registry, log, minify=True):
+def compile(registry, minify=True):
     """
     Compile static assets for all themes which are registered in ``registry``.
     """
+    log = logging.getLogger('pyramid_frontend')
     settings = registry.settings
     theme_registry = settings['pyramid_frontend.theme_registry']
     themes = theme_registry.values()
@@ -77,7 +78,7 @@ def main(args=sys.argv):
     options = parser.parse_args(args[1:])
 
     env = bootstrap(options.config_uri)
-    log = configure_logging(options.verbose)
+    configure_logging(options.verbose)
     registry = env['registry']
-    compile(registry, log, minify=(not options.no_minify))
+    compile(registry, minify=(not options.no_minify))
     return 0

@@ -76,8 +76,8 @@ def main(args=sys.argv):
 
     options = parser.parse_args(args[1:])
 
-    log = configure_logging(options.verbose)
     env = bootstrap(options.config_uri)
+    log = configure_logging(options.verbose)
     registry = env['registry']
     compile(registry, log, minify=(not options.no_minify))
     return 0

@@ -94,7 +94,8 @@ class Theme(object):
         debug = asbool(self.settings.get('debug'))
         base_module_dir = \
             self.settings.get('pyramid_frontend.module_directory')
-        module_dir = base_module_dir and os.path.join(base_module_dir, self.key)
+        module_dir = base_module_dir and os.path.join(base_module_dir,
+                                                      self.key)
 
         return SuperTemplateLookup(directories=self.template_dirs,
                                    input_encoding='utf-8',

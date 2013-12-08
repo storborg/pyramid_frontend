@@ -17,7 +17,7 @@ def compile(registry, log, minify=True):
     themes = theme_registry.values()
     count = len(themes)
     for ii, theme in enumerate(themes):
-        log.info("%d / %d - Compiling theme: %s", ii, count, theme.key)
+        log.warn("%d / %d - Compiling theme: %s", ii + 1, count, theme.key)
         theme.compile(minify=minify)
 
 

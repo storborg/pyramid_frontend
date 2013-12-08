@@ -5,7 +5,7 @@ import inspect
 import pkg_resources
 
 from pyramid.decorator import reify
-from pyramid.settings import aslist
+from pyramid.settings import aslist, asbool
 from pyramid.path import DottedNameResolver
 
 from .templating.lookup import SuperTemplateLookup
@@ -90,11 +90,19 @@ class Theme(object):
         template_imports.extend(aslist(
             self.settings.get('pyramid_frontend.template_imports', ''),
             flatten=False))
+
+        debug = asbool(self.settings.get('debug'))
+        base_module_dir = \
+            self.settings.get('pyramid_frontend.module_directory')
+        module_dir = base_module_dir and os.path.join(base_module_dir, self.key)
+
         return SuperTemplateLookup(directories=self.template_dirs,
                                    input_encoding='utf-8',
                                    output_encoding='utf-8',
                                    imports=template_imports,
-                                   default_filters=default_filters)
+                                   default_filters=default_filters,
+                                   filesystem_checks=debug,
+                                   module_directory=module_dir)
 
     @reify
     def stacked_image_filters(self):

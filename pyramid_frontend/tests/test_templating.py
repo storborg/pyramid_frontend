@@ -1,5 +1,4 @@
 from __future__ import absolute_import, print_function, division
-
 from unittest import TestCase
 
 from mako.exceptions import TopLevelLookupException
@@ -75,7 +74,7 @@ class TestLookupOptions(TestCase):
         theme = foo.FooTheme(self.settings)
         dirs = theme.lookup.directories
         lookup = SuperTemplateLookup(directories=dirs,
-                                     filesystem_checks=False)
+                                     filesystem_checks=True)
         templ = lookup.get_template('index.html')
         s = templ.render()
         self.assertIn('foo theme', s)

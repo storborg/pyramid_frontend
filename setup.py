@@ -57,6 +57,7 @@ setup(name='pyramid_frontend',
           'webHelpers2',
           'six',
           # These are for tests.
+          'mock',
           'webtest',
           'coverage',
           'nose>=1.1',

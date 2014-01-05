@@ -55,6 +55,7 @@ setup(name='pyramid_frontend',
           'Pillow>=2.1.0',      # Provides PIL
           'Mako>=0.9.0',
           # These are for tests.
+          'webtest',
           'coverage',
           'nose>=1.1',
           'nose-cover3',

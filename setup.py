@@ -54,6 +54,8 @@ setup(name='pyramid_frontend',
           'Pyramid>=1.4.5',
           'Pillow>=2.1.0',      # Provides PIL
           'Mako>=0.9.0',
+          'webHelpers2',
+          'six',
           # These are for tests.
           'webtest',
           'coverage',

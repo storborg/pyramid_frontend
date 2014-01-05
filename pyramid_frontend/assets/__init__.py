@@ -1,6 +1,6 @@
 from __future__ import absolute_import, print_function, division
 
-from webhelpers.html.tags import literal
+from webhelpers2.html.tags import literal
 from pyramid.settings import asbool
 
 from .requirejs import RequireJSCompiler

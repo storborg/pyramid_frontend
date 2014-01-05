@@ -85,7 +85,7 @@ class Theme(object):
                            ['escape'])
 
         template_imports = [
-            'from webhelpers.html import escape',
+            'from webhelpers2.html import escape',
         ]
         template_imports.extend(aslist(
             self.settings.get('pyramid_frontend.template_imports', ''),

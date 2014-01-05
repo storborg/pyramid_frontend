@@ -3,7 +3,7 @@ from __future__ import absolute_import, print_function, division
 import os
 import re
 
-from webhelpers.html.tags import HTML
+from webhelpers2.html.tags import HTML
 
 from .compiler import Compiler
 

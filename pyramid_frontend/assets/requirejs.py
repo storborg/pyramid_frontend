@@ -4,7 +4,7 @@ import logging
 
 import os
 
-from webhelpers.html.tags import HTML
+from webhelpers2.html.tags import HTML
 
 from .compiler import Compiler
 

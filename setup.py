@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 import os
 from setuptools import setup
 from distutils.command.build import build as _build
@@ -24,12 +26,12 @@ class build(_build):
     def finalize_options(self):
         _build.finalize_options(self)
         for exe in executables:
-            print 'checking for %r...' % exe,
+            print('checking for %r...' % exe)
             fpath = which(exe)
             if not fpath:
-                print 'WARNING: Missing %r executable!' % exe
+                print('WARNING: Missing %r executable!' % exe)
             else:
-                print fpath
+                print(fpath)
 
 
 setup(name='pyramid_frontend',

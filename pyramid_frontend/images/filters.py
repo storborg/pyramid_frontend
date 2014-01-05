@@ -4,7 +4,8 @@ import shutil
 import tempfile
 import subprocess
 import math
-from cStringIO import StringIO
+from six import BytesIO
+from six.moves import range
 
 from PIL import Image
 
@@ -166,8 +167,8 @@ class VignetteFilter(Filter):
         outside = length(center, (0, 0))
 
         data = []
-        for y in xrange(h):
-            for x in xrange(w):
+        for y in range(h):
+            for x in range(w):
                 radius = length(center, (x, y))
                 factor = light_falloff(radius, outside)
                 data.append(factor)
@@ -208,7 +209,7 @@ class JPGSaver(Filter):
             im = ni
         elif im.mode != "RGB":
             im = im.convert('RGB')
-        buf = StringIO()
+        buf = BytesIO()
         im.save(buf, 'JPEG', **self.kwargs)
         buf.seek(0)
         return buf
@@ -240,7 +241,7 @@ class PNGSaver(Filter):
     def filter(self, im):
         if self.sharpness:
             im = sharpen(im, self.sharpness)
-        buf = StringIO()
+        buf = BytesIO()
         if self.palette:
             if im.mode in ('RGBA', 'LA'):
                 alpha = im.split()[3]

@@ -4,7 +4,7 @@ import os.path
 import subprocess
 from mock import patch
 from unittest import TestCase
-from cStringIO import StringIO
+from six import StringIO
 
 from .. import compile
 from ..assets.compiler import Compiler

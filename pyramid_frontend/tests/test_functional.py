@@ -2,7 +2,7 @@ from __future__ import absolute_import, print_function, division
 
 import re
 from unittest import TestCase
-from cStringIO import StringIO
+from six import BytesIO
 
 from webtest import TestApp
 
@@ -123,7 +123,7 @@ class TestImagesFunctional(Functional):
         url_resp = self.app.get('/image-url')
         img_resp = self.app.get(url_resp.body)
         # This image should be 200x200
-        f = StringIO(img_resp.body)
+        f = BytesIO(img_resp.body)
         im = Image.open(f)
         self.assertEqual(im.size, (200, 200))
 
@@ -186,7 +186,7 @@ class TestImagesFunctional(Functional):
         name = 'smiley-jpeg-rgb'
         prefix = files.prefix_for_name(name)
         resp = self.app.get('/img/%s/%s_thumb.png' % (prefix, name))
-        f = StringIO(resp.body)
+        f = BytesIO(resp.body)
         im = Image.open(f)
         self.assertEqual(im.size, (200, 200))
 
@@ -205,6 +205,6 @@ class TestImagesDebug(Functional):
         name = 'nonexistent-file'
         prefix = files.prefix_for_name(name)
         img_resp = self.app.get('/img/%s/%s_jpg_thumb.png' % (prefix, name))
-        f = StringIO(img_resp.body)
+        f = BytesIO(img_resp.body)
         im = Image.open(f)
         self.assertEqual(im.size, (200, 200))

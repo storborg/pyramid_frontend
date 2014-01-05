@@ -17,28 +17,28 @@ class TestThemeLookup(TestCase):
         theme = foo.FooTheme(self.settings)
         templ = theme.lookup.get_template('index.html')
         s = templ.render()
-        self.assertIn('base theme base.html', s)
-        self.assertIn('foo theme base.html', s)
-        self.assertIn('base theme index.html', s)
-        self.assertNotIn('bar', s)
+        self.assertIn(b'base theme base.html', s)
+        self.assertIn(b'foo theme base.html', s)
+        self.assertIn(b'base theme index.html', s)
+        self.assertNotIn(b'bar', s)
 
     def test_render_foo_article(self):
         theme = foo.FooTheme(self.settings)
         templ = theme.lookup.get_template('article.html')
         s = templ.render()
-        self.assertIn('base theme base.html', s)
-        self.assertIn('foo theme base.html', s)
-        self.assertIn('foo theme article.html', s)
-        self.assertNotIn('bar', s)
+        self.assertIn(b'base theme base.html', s)
+        self.assertIn(b'foo theme base.html', s)
+        self.assertIn(b'foo theme article.html', s)
+        self.assertNotIn(b'bar', s)
 
     def test_render_base_index(self):
         theme = base.BaseTheme(self.settings)
         templ = theme.lookup.get_template('index.html')
         s = templ.render()
-        self.assertIn('base theme base.html', s)
-        self.assertIn('base theme index.html', s)
-        self.assertNotIn('foo', s)
-        self.assertNotIn('bar', s)
+        self.assertIn(b'base theme base.html', s)
+        self.assertIn(b'base theme index.html', s)
+        self.assertNotIn(b'foo', s)
+        self.assertNotIn(b'bar', s)
 
     def test_render_missing_template(self):
         theme = foo.FooTheme(self.settings)
@@ -54,14 +54,14 @@ class TestThemeLookup(TestCase):
         theme = foo.FooTheme(self.settings)
         templ = theme.lookup_nofilters.get_template('article.txt')
         s = templ.render()
-        self.assertIn('foo theme article.txt', s)
-        self.assertIn('this should not be escaped: <>', s)
+        self.assertIn(b'foo theme article.txt', s)
+        self.assertIn(b'this should not be escaped: <>', s)
 
     def test_render_text_unicode(self):
         theme = foo.FooTheme(self.settings)
         templ = theme.lookup_nofilters.get_template('unicode.txt')
         s = templ.render()
-        self.assertIn('foo theme unicode.txt', s)
+        self.assertIn(b'foo theme unicode.txt', s)
         self.assertIn(u'this is unicode: \u2603'.encode('utf8'), s)
 
 

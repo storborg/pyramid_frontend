@@ -56,12 +56,12 @@ class TestThemeStrategy(Functional):
 
     def test_render_alternate_theme(self):
         resp = self.app.get('/?theme=base')
-        self.assertIn('base', resp.body)
-        self.assertNotIn('foo', resp.body)
+        self.assertIn(b'base', resp.body)
+        self.assertNotIn(b'foo', resp.body)
 
         resp = self.app.get('/?theme=foo')
-        self.assertIn('base', resp.body)
-        self.assertIn('foo', resp.body)
+        self.assertIn(b'base', resp.body)
+        self.assertIn(b'foo', resp.body)
 
 
 class TestAssetsFunctional(Functional):
@@ -88,28 +88,31 @@ class TestCompiledFunctional(Functional):
 
     def test_js_tag(self):
         resp = self.app.get('/js-tag')
-        self.assertNotIn('require.js', resp.body)
+        body = resp.body.decode('utf-8')
+        self.assertNotIn('require.js', body)
         # Look for something that looks like a hex digest
-        self.assertRegexpMatches(resp.body, '[a-f0-9]{8,}')
+        self.assertRegexpMatches(body, '[a-f0-9]{8,}')
         # Fetch a second time to test caching and make sure it's the same
         # result.
         resp2 = self.app.get('/js-tag')
-        self.assertEqual(resp.body, resp2.body)
+        body2 = resp2.body.decode('utf-8')
+        self.assertEqual(body, body2)
 
         # Extract the filepath and load it.
-        m = re.search('src="([^\"]+)"', resp.body)
+        m = re.search('src="([^\"]+)"', body)
         path = m.group(1)
         file_resp = self.app.get(path)
         self.assertGreater(len(file_resp.body), 0)
 
     def test_css_tag(self):
         resp = self.app.get('/css-tag')
-        self.assertNotIn('less.js', resp.body)
+        body = resp.body.decode('utf-8')
+        self.assertNotIn('less.js', body)
         # Look for something that looks like a hex digest
-        self.assertRegexpMatches(resp.body, '[a-f0-9]{8,}')
+        self.assertRegexpMatches(body, '[a-f0-9]{8,}')
 
         # Extract the filepath and load it.
-        m = re.search('href="([^\"]+)"', resp.body)
+        m = re.search('href="([^\"]+)"', body)
         path = m.group(1)
         file_resp = self.app.get(path)
         self.assertGreater(len(file_resp.body), 0)
@@ -121,7 +124,7 @@ class TestImagesFunctional(Functional):
 
     def test_fetch_image(self):
         url_resp = self.app.get('/image-url')
-        img_resp = self.app.get(url_resp.body)
+        img_resp = self.app.get(url_resp.body.decode('utf-8'))
         # This image should be 200x200
         f = BytesIO(img_resp.body)
         im = Image.open(f)
@@ -131,7 +134,7 @@ class TestImagesFunctional(Functional):
         url_resp = self.app.get('/image-url')
         qual_resp = self.app.get('/image-url?qualified=1')
         self.assertTrue(qual_resp.body.endswith(url_resp.body))
-        self.assertTrue(qual_resp.body.startswith('http://'))
+        self.assertTrue(qual_resp.body.startswith(b'http://'))
 
     def test_image_url_theme(self):
         self.app.get('/image-url?filter_key=full')

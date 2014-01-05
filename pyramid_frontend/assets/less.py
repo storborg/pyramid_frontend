@@ -28,7 +28,7 @@ class LessCompiler(Compiler):
             lessc_flags.append('--compress')
 
         with self.tempfile() as (in_fd, in_name):
-            os.write(in_fd, self.concatenate(entry_point))
+            os.write(in_fd, self.concatenate(entry_point).encode('utf-8'))
             cmd = ['lessc'] + lessc_flags + [in_name]
             with self.tempfile() as (out_fd, out_name):
                 cmd.append(out_name)

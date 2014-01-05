@@ -17,7 +17,7 @@ def prefix_for_name(name):
     Return the 4-char hash prefix to use for this image name (prevents having
     too many images in the same directory).
     """
-    return hashlib.md5(name).hexdigest()[:4]
+    return hashlib.md5(name.encode('utf-8')).hexdigest()[:4]
 
 
 def get_url_prefix(settings):
@@ -32,7 +32,7 @@ def save_image(settings, name, original_ext, f):
 
 
 def save_locally(path, f):
-    diskf = open(path, 'w')
+    diskf = open(path, 'wb')
     f.seek(0)
     shutil.copyfileobj(f, diskf)
     diskf.close()

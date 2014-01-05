@@ -107,7 +107,7 @@ class TestFilters(TestCase):
 
     def test_file_save(self):
         saver = filters.PNGSaver()
-        f = open(os.path.join(samples_dir, 'smiley-jpeg-rgb.jpg'))
+        f = open(os.path.join(samples_dir, 'smiley-jpeg-rgb.jpg'), 'rb')
         f = saver(f)
 
         nm = Image.open(f)

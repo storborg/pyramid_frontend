@@ -177,7 +177,7 @@ class Theme(object):
         output_dir = os.path.join(
             self.settings['pyramid_frontend.compiled_asset_dir'],
             self.key)
-        for key, (entry_point, asset_type) in self.stacked_assets.iteritems():
+        for key, (entry_point, asset_type) in self.stacked_assets.items():
             assets.compile_asset(theme=self,
                                  output_dir=output_dir,
                                  key=key,

@@ -44,6 +44,8 @@ class Compiler(object):
         Write the compiled result for a particular entry point to the
         appropriate file and map file.
         """
+        contents = contents.encode('utf-8')
+
         log.debug('Write - key: %r, entry_point: %r', key, entry_point)
         hash = sha1(contents).hexdigest()
 

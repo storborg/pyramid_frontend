@@ -106,6 +106,8 @@ class ThumbFilter(Filter):
         else:
             should_entropy_crop = False
 
+        # FIXME The cropping behavior is not really correct here for dimensions
+        # that are partially unspecified.
         if should_entropy_crop and is_larger(im, self.dimensions):
             im = crop_entropy(im, self.dimensions)
 

@@ -136,11 +136,12 @@ def is_white_background(im, tolerance=180):
 def is_larger(im, dimensions):
     """
     Check if this image is currently larger in either axis than the desired
-    dimensions.
+    dimensions. If either desired dimension is None, the image will be larger
+    in that dimension.
     """
     w, h = im.size
     desired_w, desired_h = dimensions
-    return (w > desired_w) or (h > desired_h)
+    return (w > (desired_w or 0)) or (h > (desired_h or 0))
 
 
 def bounding_box(im, tolerance=0):

@@ -19,7 +19,7 @@ class TestFiles(TestCase):
             files.check(f)
 
     def test_check_good(self):
-        f = open(os.path.join(samples_dir, 'smiley-jpeg-rgb.jpg'))
+        f = open(os.path.join(samples_dir, 'smiley-jpeg-rgb.jpg'), 'rb')
         files.check(f)
 
     def test_save_to_error_dir(self):

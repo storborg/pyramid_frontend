@@ -5,7 +5,7 @@ import os.path
 import shutil
 import pkg_resources
 
-from unittest import TestCase
+from unittest import TestCase, skip
 
 from PIL import Image
 
@@ -55,18 +55,42 @@ class TestFilterChain(TestCase):
         im = Image.open(proc_path)
         return im
 
-    def test_chain_basic(self):
+    def _chain_basic(self, filename):
         chain = FilterChain('thumb50', extension='png',
                             width=50, height=50)
-        for filename in self.test_files:
-            im = self._process(chain, filename)
-            self.assertEqual(im.size, (50, 50))
+        im = self._process(chain, filename)
+        self.assertEqual(im.size, (50, 50))
 
-    def test_chain_passthrough_jpeg(self):
+    def test_chain_basic_jpeg_rgb(self):
+        self._chain_basic('smiley-jpeg-rgb.jpg')
+
+    def test_chain_basic_jpeg_cmyk(self):
+        self._chain_basic('smiley-jpeg-cmyk.jpg')
+
+    def test_chain_basic_png(self):
+        self._chain_basic('smiley-png24-alpha.png')
+
+    # Pillow has broken GIF support in the versions that support py3k.
+    @skip
+    def test_chain_basic_gif(self):
+        self._chain_basic('smiley-gif-alpha.gif')
+
+    def _chain_passthrough(self, filename):
         chain = PassThroughFilterChain()
-        for filename in self.test_files:
-            im = self._process(chain, filename)
-            self.assertEqual(im.size, (512, 512))
+        im = self._process(chain, filename)
+        self.assertEqual(im.size, (512, 512))
+
+    def test_chain_passthrough_jpeg_rgb(self):
+        self._chain_passthrough('smiley-jpeg-rgb.jpg')
+
+    def test_chain_passthrough_jpeg_cmyk(self):
+        self._chain_passthrough('smiley-jpeg-cmyk.jpg')
+
+    def test_chain_passthrough_png(self):
+        self._chain_passthrough('smiley-png24-alpha.png')
+
+    def test_chain_passthrough_gif(self):
+        self._chain_passthrough('smiley-gif-alpha.gif')
 
     def test_run_missing_output_dir(self):
         chain = FilterChain('thumb50', extension='png',

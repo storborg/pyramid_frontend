@@ -1,9 +1,9 @@
-Overview
-========
+Pyramid Frontend Tools
+======================
 
 Scott Torborg - `Cart Logic <http://www.cartlogic.com>`_
 
-Provides:
+``pyramid_frontend`` provides:
 
 * Theme / template handling.
 * Theme switching based on the ``request``.

@@ -36,7 +36,7 @@ class build(_build):
 
 setup(name='pyramid_frontend',
       cmdclass={'build': build},
-      version='0.1',
+      version='0.2',
       description='Themes, image filtering, and frontend asset handling.',
       long_description='',
       classifiers=[

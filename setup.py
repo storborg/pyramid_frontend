@@ -1,7 +1,7 @@
 from __future__ import print_function
 
 import os
-from setuptools import setup
+from setuptools import setup, find_packages
 from distutils.command.build import build as _build
 
 
@@ -60,7 +60,7 @@ setup(name='pyramid_frontend',
           'six',
       ],
       license='MIT',
-      packages=['pyramid_frontend'],
+      packages=find_packages(),
       test_suite='nose.collector',
       tests_require=['nose'],
       include_package_data=True,

@@ -5,7 +5,7 @@ import tempfile
 import subprocess
 import math
 from six import BytesIO
-from six.moves import range
+from six.moves import xrange
 
 from PIL import Image
 
@@ -169,8 +169,8 @@ class VignetteFilter(Filter):
         outside = length(center, (0, 0))
 
         data = []
-        for y in range(h):
-            for x in range(w):
+        for y in xrange(h):
+            for x in xrange(w):
                 radius = length(center, (x, y))
                 factor = light_falloff(radius, outside)
                 data.append(factor)

@@ -5,7 +5,7 @@ from mako.exceptions import TopLevelLookupException
 
 from ..templating.lookup import SuperTemplateLookup
 
-from .example import base, foo
+from .example import base, foo, quux
 
 
 class TestThemeLookup(TestCase):
@@ -22,6 +22,8 @@ class TestThemeLookup(TestCase):
         self.assertIn(b'base theme index.html', s)
         self.assertNotIn(b'bar', s)
 
+        self.assertIn(b'foo theme blocks header', s)
+
     def test_render_foo_article(self):
         theme = foo.FooTheme(self.settings)
         templ = theme.lookup.get_template('article.html')
@@ -31,6 +33,8 @@ class TestThemeLookup(TestCase):
         self.assertIn(b'foo theme article.html', s)
         self.assertNotIn(b'bar', s)
 
+        self.assertIn(b'foo theme blocks header', s)
+
     def test_render_base_index(self):
         theme = base.BaseTheme(self.settings)
         templ = theme.lookup.get_template('index.html')
@@ -39,6 +43,28 @@ class TestThemeLookup(TestCase):
         self.assertIn(b'base theme index.html', s)
         self.assertNotIn(b'foo', s)
         self.assertNotIn(b'bar', s)
+
+        self.assertIn(b'base theme blocks header', s)
+
+    def test_render_base_article(self):
+        theme = base.BaseTheme(self.settings)
+        templ = theme.lookup.get_template('article.html')
+        s = templ.render()
+        self.assertIn(b'base theme base.html', s)
+        self.assertIn(b'base theme article.html', s)
+        self.assertNotIn(b'foo', s)
+
+        self.assertIn(b'base theme blocks header', s)
+
+    def test_render_quux_article(self):
+        theme = quux.QuuxTheme(self.settings)
+        templ = theme.lookup.get_template('article.html')
+        s = templ.render()
+        self.assertIn(b'base theme base.html', s)
+        self.assertIn(b'foo theme base.html', s)
+        self.assertIn(b'foo theme article.html', s)
+
+        self.assertIn(b'quux theme blocks header', s)
 
     def test_render_missing_template(self):
         theme = foo.FooTheme(self.settings)

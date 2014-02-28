@@ -52,8 +52,13 @@ class SuperTemplateLookup(TemplateLookup):
         else:
             from_dir = None
 
+        if self.super_delimiter in relativeto:
+            relativeto = relativeto.split(self.super_delimiter)[0]
+
         uri = TemplateLookup.adjust_uri(self, uri, relativeto)
         if from_dir:
-            return uri + self.super_delimiter + from_dir
+            assert self.super_delimiter not in uri
+            new_uri = uri + self.super_delimiter + from_dir
+            return new_uri
         else:
             return uri

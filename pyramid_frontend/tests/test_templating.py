@@ -1,7 +1,11 @@
 from __future__ import absolute_import, print_function, division
+
+import os.path
 from unittest import TestCase
 
 from mako.exceptions import TopLevelLookupException
+from mako.runtime import Context
+from mako.util import FastEncodingBuffer
 
 from ..templating.lookup import SuperTemplateLookup
 
@@ -74,7 +78,7 @@ class TestThemeLookup(TestCase):
     def test_find_dir_for(self):
         theme = foo.FooTheme(self.settings)
         with self.assertRaises(ValueError):
-            theme.lookup.find_dir_for('/some/other/path.html')
+            theme.lookup.find_dir_for_path('/some/other/path.html')
 
     def test_render_text(self):
         theme = foo.FooTheme(self.settings)
@@ -89,6 +93,31 @@ class TestThemeLookup(TestCase):
         s = templ.render()
         self.assertIn(b'foo theme unicode.txt', s)
         self.assertIn(u'this is unicode: \u2603'.encode('utf8'), s)
+
+    def test_get_def_base(self):
+        theme = base.BaseTheme(self.settings)
+        templ = theme.lookup.get_template('common/blocks.html')
+        buf = FastEncodingBuffer(as_unicode=True)
+        ctx = Context(buf)
+        templ.get_def('hello').render_context(ctx)
+
+        s = buf.getvalue()
+        self.assertIn('base theme blocks hello', s)
+
+    def test_get_def_by_file(self):
+        theme = quux.QuuxTheme(self.settings)
+
+        filename = os.path.join(theme.template_dirs[1], 'common/blocks.html')
+        uri = theme.lookup.filename_to_uri(filename)
+
+        templ = theme.lookup.get_template(uri)
+
+        buf = FastEncodingBuffer(as_unicode=True)
+        ctx = Context(buf)
+        templ.get_def('hello').render_context(ctx)
+
+        s = buf.getvalue()
+        self.assertIn('foo theme blocks hello', s)
 
 
 class TestLookupOptions(TestCase):

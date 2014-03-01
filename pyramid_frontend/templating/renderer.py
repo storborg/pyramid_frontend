@@ -7,6 +7,10 @@ from pyramid.compat import reraise
 
 
 class MakoRenderingException(Exception):
+    """
+    When an exception occurs during the rendering of a template, it will be
+    re-raised as one of these exceptions.
+    """
     def __init__(self, s):
         self.s = s
 
@@ -17,6 +21,10 @@ class MakoRenderingException(Exception):
 
 
 class MakoRenderer(object):
+    """
+    A class which can be instantiated to make a Pyramid renderer for Mako
+    templates.
+    """
 
     def __init__(self, info, clear_default_filters=False):
         self.name = info.name
@@ -73,8 +81,16 @@ class MakoRenderer(object):
 
 
 def mako_renderer_factory(info):
+    """
+    A Pyramid renderer factory to render Mako templates with default settings.
+    """
     return MakoRenderer(info)
 
 
 def mako_renderer_factory_nofilters(info):
+    """
+    A Pyramid renderer factory to render Mako templates with no default
+    HTML-escaping filters. This renderer factory should generally be used for
+    plaintext templates rather than HTML.
+    """
     return MakoRenderer(info, clear_default_filters=True)

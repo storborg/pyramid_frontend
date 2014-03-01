@@ -1,6 +1,24 @@
 Pyramid-Frontend Changelog
 ==========================
 
+Version 0.3
+-----------
+
+- Added looking up the URI of a template based on filename, and then using that
+  URI to refer to a template that may not be at the end of an inheritance
+  chain.
+- Fix a bug which prevent using inherited namespaces from an inherited
+  template.
+- Clean up some Python 3 compatibility mechanisms that may have caused issues
+  on certain platforms.
+
+Version 0.2
+-----------
+
+- Python 3 compatibility.
+- Adopted ``tox`` for testing and static analysis.
+- Some documentation improvements.
+
 
 Version 0.1
 -----------

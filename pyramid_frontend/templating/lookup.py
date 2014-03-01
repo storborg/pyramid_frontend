@@ -9,9 +9,23 @@ from mako.lookup import TemplateLookup
 
 
 class SuperTemplateLookup(TemplateLookup):
+    """
+    A subclass of ``mako.lookup.TemplateLookup`` which provides an extra bit of
+    functionality for building template inheritance chains.
+
+    For normal documented usage, behavior is the same as the normal
+    ``TemplateLookup`` class. However, it is additional possible for a template
+    to inherit from another template which has the same file path, by prefixing
+    the URI with ``super:``. This inheritance style is not possible with the
+    base ``TemplateLookup``.
+    """
     super_delimiter = '::'
 
     def find_dir_for_path(self, filename):
+        """
+        Given a file path, return the template directory within the lookup's
+        list of directories where it can be found.
+        """
         for dir in self.directories:
             if os.path.commonprefix([filename, dir]) == dir:
                 return dir
@@ -19,6 +33,11 @@ class SuperTemplateLookup(TemplateLookup):
                          "directories" % filename)
 
     def find_dir_for_uri(self, uri, start_index=0):
+        """
+        Given a template URI, return the first directory in the lookup's list
+        of directories where it can be found, starting at the ``start_index``
+        directory in the list.
+        """
         u = re.sub(r'^\/+', '', uri)
         for dir in self.directories[start_index:]:
             srcfile = posixpath.normpath(posixpath.join(dir, u))
@@ -86,6 +105,10 @@ class SuperTemplateLookup(TemplateLookup):
             return uri
 
     def filename_to_uri(self, filename):
+        """
+        Given a filename, return a URI which can be used to access this
+        template from the lookup.
+        """
         from_dir = self.find_dir_for_path(filename)
         base_uri = TemplateLookup.filename_to_uri(self, filename)
         ret = base_uri + self.super_delimiter + from_dir

@@ -9,7 +9,7 @@ import shutil
 from pyramid.config import Configurator
 
 from pyramid_frontend.tests.example import base, foo, bar
-from pyramid_frontend.images.files import save_image
+from pyramid_frontend.images.files import check_and_save_image
 from pyramid_frontend.images.chain import FilterChain
 
 from .. import compile
@@ -83,8 +83,9 @@ def load_images(settings=default_settings):
 
     for filename in glob.glob(os.path.join(samples_dir, '*.*')):
         f = open(filename, 'rb')
-        name, original_ext = os.path.basename(filename).rsplit('.', 1)
-        save_image(settings, name, original_ext, f)
+        name, raw_ext = os.path.basename(filename).rsplit('.', 1)
+        if name != 'not-an-image':
+            check_and_save_image(settings, name, f)
 
 
 def make_app(settings=None, theme_strategy=None):

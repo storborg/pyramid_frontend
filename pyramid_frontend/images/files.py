@@ -83,3 +83,32 @@ def processed_path(settings, name, original_ext, chain):
         dir,
         prefix_for_name(name),
         chain.basename(name, original_ext))
+
+
+def check_and_save_image(settings, name, f):
+    """
+    Save an image to the local ``pyramid_frontend`` image originals directory,
+    using the supplied base name and file-like object.
+
+    The extension is chosen and normalized based on file format, and returned.
+    It will always be three characters.
+
+    If the image is not valid (cannot be loaded as a PIL image), it is saved to
+    the error directory, and the exception raised by PIL is re-raised.
+    """
+    try:
+        format, mode = check(f)
+    except IOError:
+        save_to_error_dir(settings, name, f)
+        raise
+
+    possible_extensions = {
+        'JPEG': 'jpg',
+        'PNG': 'png',
+        'TIFF': 'tif',
+        'GIF': 'gif',
+    }
+    original_ext = possible_extensions[format]
+    save_image(settings, name, original_ext, f)
+    f.close()
+    return dict(ext=original_ext)

@@ -32,3 +32,12 @@ class TestFiles(TestCase):
         files.save_to_error_dir(settings, name, f)
         # Saving same file twice should work
         files.save_to_error_dir(settings, '2.png', f)
+
+    def test_check_and_save_image(self):
+        f = open(os.path.join(samples_dir, 'not-an-image.png'), 'rb')
+        error_dir = os.path.join(utils.work_dir, 'errors')
+        settings = {
+            'pyramid_frontend.error_dir': error_dir,
+        }
+        with self.assertRaises(IOError):
+            files.check_and_save_image(settings, 'not-an-image', f)

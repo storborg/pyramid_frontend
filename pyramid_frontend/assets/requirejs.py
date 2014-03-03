@@ -84,7 +84,7 @@ class RequireJSCompiler(Compiler):
             log.debug("path _%s -> %s", key, dir)
             cmd.append('paths.{}={}'.format(dir_ref, dir))
 
-        with self.tempfile() as (fd, temp_name):
+        with self.tempfile() as (f, temp_name):
             cmd.append('out={0}'.format(temp_name))
             self.run_command(cmd)
             file_path = self.write_from_file(key, temp_name, entry_point,

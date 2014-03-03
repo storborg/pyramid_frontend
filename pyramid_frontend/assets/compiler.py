@@ -6,9 +6,12 @@ import os
 import tempfile
 import time
 import subprocess
+import io
 
 from contextlib import contextmanager
 from hashlib import sha1
+
+import six
 
 log = logging.getLogger(__name__)
 
@@ -43,14 +46,15 @@ class Compiler(object):
         """
         Write the compiled result for a particular entry point to the
         appropriate file and map file.
-        """
-        contents = contents.encode('utf-8')
 
+        The ``contents`` field should always be a unicode type (str on 3.x).
+        """
+        assert isinstance(contents, six.text_type)
         log.debug('Write - key: %r, entry_point: %r', key, entry_point)
-        hash = sha1(contents).hexdigest()
+        hash = sha1(contents.encode('utf-8')).hexdigest()
 
         name = os.path.basename(entry_point)
-        file_name = '{name}-{hash}.{ext}'.format(
+        file_name = u'{name}-{hash}.{ext}'.format(
             name=name, hash=hash, ext=self.name)
         file_path = os.path.join(output_dir, file_name)
 
@@ -58,12 +62,12 @@ class Compiler(object):
             os.makedirs(output_dir)
 
         log.debug('Writing to %s ...', file_path)
-        with open(file_path, 'wb') as f:
+        with io.open(file_path, 'w') as f:
             f.write(contents)
 
         map_path = os.path.join(output_dir, key + '.map')
         log.debug('Writing map file to %s ...', map_path)
-        with open(map_path, 'w') as f:
+        with io.open(map_path, 'w') as f:
             f.write(file_name)
 
         return file_path
@@ -73,7 +77,7 @@ class Compiler(object):
         Like ``write()``, but writes from a source file instead of a buffer
         variable.
         """
-        with open(file_name) as f:
+        with io.open(file_name) as f:
             contents = f.read()
         return self.write(key, contents, entry_point, output_dir)
 
@@ -82,12 +86,11 @@ class Compiler(object):
         """
         A context manager helper to generate a temporary file for quick use.
         """
-        fd, name = tempfile.mkstemp(*args, **kwargs)
+        f = tempfile.NamedTemporaryFile()
         try:
-            yield fd, name
+            yield f, f.name
         finally:
-            os.close(fd)
-            os.remove(name)
+            f.close()
 
     def tag(self, url, production=True):
         if production:

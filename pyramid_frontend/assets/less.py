@@ -2,8 +2,11 @@ from __future__ import absolute_import, print_function, division
 
 import os
 import re
+import io
 
 from webhelpers2.html.tags import HTML
+
+import six
 
 from .compiler import Compiler
 
@@ -27,10 +30,16 @@ class LessCompiler(Compiler):
         if minify:
             lessc_flags.append('--compress')
 
-        with self.tempfile() as (in_fd, in_name):
-            os.write(in_fd, self.concatenate(entry_point).encode('utf-8'))
+        preprocessed = self.concatenate(entry_point)
+        assert isinstance(preprocessed, six.text_type)
+
+        preprocessed = preprocessed.encode('utf-8')
+
+        with self.tempfile() as (in_f, in_name):
+            in_f.write(preprocessed)
+            in_f.flush()
             cmd = ['lessc'] + lessc_flags + [in_name]
-            with self.tempfile() as (out_fd, out_name):
+            with self.tempfile() as (out_f, out_name):
                 cmd.append(out_name)
                 self.run_command(cmd)
                 file_path = self.write_from_file(key, out_name, entry_point,
@@ -43,12 +52,15 @@ class LessCompiler(Compiler):
         Combine a LESS file and its `@import`s, recursively. Used to keep
         the ``lessc`` command-line compiler from having to traverse a directory
         structure, which it doesn't support very well right now.
+
+        Always assumes file encodings are UTF-8, and should always return a
+        unicode string (unicode on 2.x, str on 3.x).
         """
         err = 'File does not exist {0}'.format(start_path)
         assert os.path.isfile(start_path), err
         contents = []
         directory = os.path.dirname(start_path)
-        with open(start_path) as fp:
+        with io.open(start_path) as fp:
             for line in fp:
                 match = self.import_re.match(line.strip())
                 if match:
@@ -63,7 +75,7 @@ class LessCompiler(Compiler):
                     contents.append(self.concatenate(path))
                 else:
                     contents.append(line)
-        return ''.join(contents)
+        return u''.join(contents)
 
     def tag_development(self, url):
         """

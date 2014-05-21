@@ -1,6 +1,14 @@
 Pyramid-Frontend Changelog
 ==========================
 
+Version 0.3.1
+-------------
+
+- Allow themes to specify an alternate lessc executable path. This is necessary
+  specifically to allow some themes to use Bootstrap 2 and some themes to use
+  Bootstrap 3: the two versions use mutually incomaptible versions of the less
+  compiler.
+
 Version 0.3
 -----------
 

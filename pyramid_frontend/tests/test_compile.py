@@ -60,16 +60,21 @@ class TestCompiler(TestCase):
 
     def test_less_compile(self):
         compiler = LessCompiler(self.theme)
-        path = compiler.compile('main-less', '/_foo/css/main.less',
-                                self.output_dir)
+        path = compiler.compile(key='main-less',
+                                theme=self.theme,
+                                entry_point='/_foo/css/main.less',
+                                output_dir=self.output_dir)
         f = open(path, 'rb')
         buf_minified = f.read()
         self.assertGreater(len(buf_minified), 0)
 
         # Test that minified version is smaller than non-minified.
         compiler = LessCompiler(self.theme)
-        path = compiler.compile('main-less', '/_foo/css/main.less',
-                                self.output_dir, minify=False)
+        path = compiler.compile(key='main-less',
+                                theme=self.theme,
+                                entry_point='/_foo/css/main.less',
+                                output_dir=self.output_dir,
+                                minify=False)
         f = open(path, 'rb')
         buf_unminified = f.read()
 
@@ -77,14 +82,20 @@ class TestCompiler(TestCase):
 
     def test_requirejs_compile(self):
         compiler = RequireJSCompiler(self.theme)
-        path = compiler.compile('main-js', '/_foo/js/main.js', self.output_dir)
+        path = compiler.compile(key='main-js',
+                                theme=self.theme,
+                                entry_point='/_foo/js/main.js',
+                                output_dir=self.output_dir)
         f = open(path, 'rb')
         buf_minified = f.read()
         self.assertGreater(len(buf_minified), 0)
 
         # Test that minified version is smaller than non-minified.
         compiler = RequireJSCompiler(self.theme)
-        path = compiler.compile('main-js', '/_foo/js/main.js', self.output_dir,
+        path = compiler.compile(key='main-js',
+                                theme=self.theme,
+                                entry_point='/_foo/js/main.js',
+                                output_dir=self.output_dir,
                                 minify=False)
         f = open(path, 'rb')
         buf_unminified = f.read()

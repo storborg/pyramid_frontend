@@ -45,7 +45,7 @@ class RequireJSCompiler(Compiler):
 
     name = 'js'
 
-    def compile(self, key, entry_point, output_dir, minify=True):
+    def compile(self, key, theme, entry_point, output_dir, minify=True):
         main_config = self.theme.static_url_to_filesystem_path(
             self.theme.require_config_path)
         base_url = self.theme.static_url_to_filesystem_path(

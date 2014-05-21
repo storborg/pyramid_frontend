@@ -42,6 +42,7 @@ def compile_asset(theme, output_dir, key, entry_point, asset_type, minify):
     cls = compiler_classes[asset_type]
     compiler = cls(theme)
     compiler.compile(key=key,
+                     theme=theme,
                      entry_point=entry_point,
                      output_dir=output_dir,
                      minify=minify)

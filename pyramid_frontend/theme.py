@@ -38,6 +38,7 @@ class Theme(object):
     require_path = '/_pfe/require.js'
     require_base_url = '/_pfe/'
     less_path = '/_pfe/less.js'
+    lessc_path = None
     includes = []
 
     def __init__(self, settings):

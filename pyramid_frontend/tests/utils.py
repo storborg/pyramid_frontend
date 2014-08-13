@@ -68,6 +68,10 @@ def css_tag_view(request):
     return request.asset_tag('main-less')
 
 
+def svg_tag_view(request):
+    return request.asset_tag('logo-svg')
+
+
 def load_images(settings=default_settings):
     """
     Load images from test 'samples' directory to originals dir.
@@ -115,6 +119,7 @@ def make_app(settings=None, theme_strategy=None):
 
     config.add_route('js-tag', '/js-tag')
     config.add_route('css-tag', '/css-tag')
+    config.add_route('svg-tag', '/svg-tag')
 
     config.add_route('text-template', '/text-template')
 
@@ -133,6 +138,7 @@ def make_app(settings=None, theme_strategy=None):
 
     config.add_view(js_tag_view, route_name='js-tag', renderer='string')
     config.add_view(css_tag_view, route_name='css-tag', renderer='string')
+    config.add_view(svg_tag_view, route_name='svg-tag', renderer='string')
 
     config.add_view(noop_view, route_name='text-template',
                     renderer='text-template.txt')

@@ -21,7 +21,8 @@ def asset_tag(request, key, **kwargs):
     else:
         url_path = asset.url_path
 
-    return literal(asset.tag(theme, url_path, production=should_compile))
+    return literal(asset.tag(theme, url_path, production=should_compile,
+                             **kwargs))
 
 
 def includeme(config):

@@ -10,6 +10,7 @@ from .. import compile
 from ..assets.asset import Asset
 from ..assets.less import LessAsset
 from ..assets.requirejs import RequireJSAsset
+from ..assets.svg import SVGAsset
 
 from . import utils
 from .example import foo
@@ -97,3 +98,13 @@ class TestAsset(TestCase):
         buf_unminified = f.read()
 
         self.assertLess(len(buf_minified), len(buf_unminified))
+
+    def test_svg_compile(self):
+        asset = SVGAsset('/_foo/images/logo.svg')
+        path = asset.compile(key='logo-svg',
+                             theme=self.theme,
+                             output_dir=self.output_dir)
+        f = open(path, 'r')
+        buf = f.read()
+        self.assertGreater(len(buf), 0)
+        self.assertIn('svg', buf)

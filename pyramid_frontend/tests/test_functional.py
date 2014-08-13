@@ -75,6 +75,11 @@ class TestAssetsFunctional(Functional):
         resp.mustcontain('main.less')
         resp.mustcontain('less.js')
 
+    def test_svg_tag(self):
+        resp = self.app.get('/svg-tag')
+        resp.mustcontain('logo.svg')
+        resp.mustcontain('img')
+
 
 class TestCompiledFunctional(Functional):
     settings = {
@@ -115,6 +120,12 @@ class TestCompiledFunctional(Functional):
         path = m.group(1)
         file_resp = self.app.get(path)
         self.assertGreater(len(file_resp.body), 0)
+
+    def test_svg_tag(self):
+        resp = self.app.get('/svg-tag')
+        resp.mustcontain('img')
+
+        # FIXME Check for minification and stuff, loading file path.
 
 
 class TestImagesFunctional(Functional):

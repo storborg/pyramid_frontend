@@ -1,6 +1,17 @@
 Pyramid-Frontend Changelog
 ==========================
 
+Version 0.4
+-----------
+
+- Switches to a class-based specification for theme assets. This enables easy
+  customization and addition of asset handlers (inside our outside of the
+  pyramid_frontend codebase), and makes it easier to configure asset-specific
+  settings (e.g. version of lessc executable to use) on the particular asset,
+  rather than theme-wide.
+- Adds an SVG asset handler, so that SVG files can be tracked in a way similar
+  to .less, .js, etc.
+
 Version 0.3.1
 -------------
 

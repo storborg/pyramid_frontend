@@ -24,8 +24,8 @@ def compile(registry, minify=True):
 
 class ConsoleHandler(logging.StreamHandler):
     """
-    A subclass of StreamHandler which behaves in the exact same way, but
-    colorizes the log level before formatting it.
+    A subclass of StreamHandler which behaves in the same way, but colorizes
+    the log level before formatting it.
     """
 
     colors = {'CRITICAL': '[1;31m',
@@ -50,6 +50,9 @@ class ConsoleHandler(logging.StreamHandler):
 
 
 def configure_logging(verbosity):
+    """
+    Configure logging for use with the asset compilation command.
+    """
     levels = [logging.CRITICAL,
               logging.ERROR,
               logging.WARNING,
@@ -70,6 +73,9 @@ def configure_logging(verbosity):
 
 
 def main(args=sys.argv):
+    """
+    Main entry point for the executable which compiles assets.
+    """
     parser = argparse.ArgumentParser(description='Compile static assets.')
     parser.add_argument('--no-minify', action='store_true', default=False)
     parser.add_argument('-v', '--verbose', action='count', default=2)

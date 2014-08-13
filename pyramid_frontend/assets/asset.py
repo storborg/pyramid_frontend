@@ -17,6 +17,9 @@ log = logging.getLogger(__name__)
 
 
 class Asset(object):
+    """
+    Generic superclass for other asset handler classes to inherit from.
+    """
 
     def __init__(self, url_path):
         self.url_path = url_path

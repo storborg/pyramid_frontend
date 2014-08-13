@@ -78,8 +78,7 @@ class TestAssetsFunctional(Functional):
 
 class TestCompiledFunctional(Functional):
     settings = {
-        'pyramid_frontend.compile_less': True,
-        'pyramid_frontend.compile_requirejs': True,
+        'pyramid_frontend.compile': True,
     }
 
     def setUp(self):

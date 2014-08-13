@@ -3,15 +3,6 @@ from __future__ import absolute_import, print_function, division
 from webhelpers2.html.tags import literal
 from pyramid.settings import asbool
 
-from .requirejs import RequireJSCompiler
-from .less import LessCompiler
-
-
-compiler_classes = {
-    'requirejs': RequireJSCompiler,
-    'less': LessCompiler,
-}
-
 
 def asset_tag(request, key, **kwargs):
     """
@@ -20,32 +11,17 @@ def asset_tag(request, key, **kwargs):
     rendering function based on context and entry point type.
     """
     theme = request.theme
-    assets = theme.stacked_assets
-    url_path, asset_type = assets[key]
+    asset = theme.stacked_assets[key]
     settings = request.registry.settings
-    should_compile = asbool(settings.get('pyramid_frontend.compile_%s' %
-                                         asset_type))
-
-    # FIXME Memoize compiler instances for this? Or maybe turn tag functions
-    # into hybrid class/instance methods?
-    cls = compiler_classes[asset_type]
-    compiler = cls(theme)
+    should_compile = asbool(settings.get('pyramid_frontend.compile'))
 
     if should_compile:
         filename = theme.compiled_asset_path(key)
         url_path = '/compiled/' + theme.key + '/' + filename
+    else:
+        url_path = asset.url_path
 
-    return literal(compiler.tag(url_path, production=should_compile))
-
-
-def compile_asset(theme, output_dir, key, entry_point, asset_type, minify):
-    cls = compiler_classes[asset_type]
-    compiler = cls(theme)
-    compiler.compile(key=key,
-                     theme=theme,
-                     entry_point=entry_point,
-                     output_dir=output_dir,
-                     minify=minify)
+    return literal(asset.tag(theme, url_path, production=should_compile))
 
 
 def includeme(config):

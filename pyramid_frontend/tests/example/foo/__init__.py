@@ -2,6 +2,8 @@ from __future__ import absolute_import, print_function, division
 
 from ..base import BaseTheme
 from pyramid_frontend.images.chain import FilterChain
+from pyramid_frontend.assets.less import LessAsset
+from pyramid_frontend.assets.requirejs import RequireJSAsset
 
 
 def foo_includeme(config):
@@ -15,8 +17,8 @@ class FooTheme(BaseTheme):
         FilterChain('tiny', width=64, height=64, crop=True),
     ]
     assets = {
-        'main-less': ('/_foo/css/main.less', 'less'),
-        'main-js': ('/_foo/js/main.js', 'requirejs'),
+        'main-less': LessAsset('/_foo/css/main.less'),
+        'main-js': RequireJSAsset('/_foo/js/main.js'),
     }
     includes = [
         '.foo_includeme',

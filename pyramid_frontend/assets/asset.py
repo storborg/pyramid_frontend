@@ -16,16 +16,10 @@ import six
 log = logging.getLogger(__name__)
 
 
-class Compiler(object):
-    """
-    Generic superclass for compilers of specific asset types. This class
-    contains generic helper functions for compiling assets, and is subclassed
-    to provide compilation functionality that is specific to certain asset
-    types.
-    """
+class Asset(object):
 
-    def __init__(self, theme):
-        self.theme = theme
+    def __init__(self, url_path):
+        self.url_path = url_path
 
     def run_command(self, argv):
         """
@@ -55,7 +49,7 @@ class Compiler(object):
 
         name = os.path.basename(entry_point)
         file_name = u'{name}-{hash}.{ext}'.format(
-            name=name, hash=hash, ext=self.name)
+            name=name, hash=hash, ext=self.extension)
         file_path = os.path.join(output_dir, file_name)
 
         if not os.path.isdir(output_dir):
@@ -92,8 +86,8 @@ class Compiler(object):
         finally:
             f.close()
 
-    def tag(self, url, production=True):
+    def tag(self, theme, url, production=True):
         if production:
-            return self.tag_production(url)
+            return self.tag_production(theme, url)
         else:
-            return self.tag_development(url)
+            return self.tag_development(theme, url)

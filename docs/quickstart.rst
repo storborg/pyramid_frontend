@@ -22,8 +22,7 @@ Configure the following settings:
 * ``pyramid_frontend.original_image_dir``
 * ``pyramid_frontend.processed_image_dir``
 
-* ``pyramid_frontend.compile_less``
-* ``pyramid_frontend.compile_requirejs``
+* ``pyramid_frontend.compile``
 
 
 Add Themes

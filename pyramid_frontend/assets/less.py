@@ -8,29 +8,36 @@ from webhelpers2.html.tags import HTML
 
 import six
 
-from .compiler import Compiler
+from .asset import Asset
 
 
-class LessCompiler(Compiler):
+class LessAsset(Asset):
     """
-    Compiler for LESS CSS files.
+    Asset handler for LESS CSS files.
     """
-    name = 'css'
+    extension = 'css'
 
     import_re = re.compile(r'@import[ ]+"(?P<path>.*)";')
 
-    def compile(self, key, theme, entry_point, output_dir, minify=True):
+    def __init__(self, url_path,
+                 less_path='/_pfe/less.js',
+                 lessc_path='lessc'):
+        self.url_path = url_path
+        self.less_path = less_path
+        self.lessc_path = lessc_path
+
+    def compile(self, key, theme, output_dir, minify=True):
         """
         Compile a LESS entry point.
         """
-        entry_point = self.theme.static_url_to_filesystem_path(entry_point)
+        entry_point = theme.static_url_to_filesystem_path(self.url_path)
 
-        lessc_flags = [theme.lessc_path or 'lessc']
+        lessc_flags = [self.lessc_path]
         lessc_flags.append('--verbose')
         if minify:
             lessc_flags.append('--compress')
 
-        preprocessed = self.concatenate(entry_point)
+        preprocessed = self.concatenate(theme, entry_point)
         assert isinstance(preprocessed, six.text_type)
 
         preprocessed = preprocessed.encode('utf-8')
@@ -47,7 +54,7 @@ class LessCompiler(Compiler):
 
         return file_path
 
-    def concatenate(self, start_path):
+    def concatenate(self, theme, start_path):
         """
         Combine a LESS file and its `@import`s, recursively. Used to keep
         the ``lessc`` command-line compiler from having to traverse a directory
@@ -69,24 +76,24 @@ class LessCompiler(Compiler):
                     if ext not in ('.css', '.less'):
                         path = '.'.join((path, 'less'))
                     if os.path.isabs(path):
-                        path = self.theme.static_url_to_filesystem_path(path)
+                        path = theme.static_url_to_filesystem_path(path)
                     else:
                         path = os.path.join(directory, path)
-                    contents.append(self.concatenate(path))
+                    contents.append(self.concatenate(theme, path))
                 else:
                     contents.append(line)
         return u''.join(contents)
 
-    def tag_development(self, url):
+    def tag_development(self, theme, url):
         """
         Return an HTML fragment to use a less CSS entry point in development.
         """
         return ''.join([
             HTML.link(rel='stylesheet/less', type='text/css', href=url),
-            HTML.script(src=self.theme.less_path),
+            HTML.script(src=self.less_path),
         ])
 
-    def tag_production(self, url):
+    def tag_production(self, theme, url):
         """
         Return an HTML fragment to use a less CSS entry point in production.
         """

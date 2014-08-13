@@ -11,8 +11,6 @@ from pyramid.path import DottedNameResolver
 from .templating.lookup import SuperTemplateLookup
 from .templating.renderer import (mako_renderer_factory,
                                   mako_renderer_factory_nofilters)
-from . import assets
-
 
 static_dir = pkg_resources.resource_filename('pyramid_frontend', 'static')
 
@@ -34,11 +32,6 @@ class Theme(object):
     static_dir = 'static'
     assets = {}
     image_filters = []
-    require_config_path = '/_pfe/require_config.js'
-    require_path = '/_pfe/require.js'
-    require_base_url = '/_pfe/'
-    less_path = '/_pfe/less.js'
-    lessc_path = None
     includes = []
 
     def __init__(self, settings):
@@ -178,13 +171,11 @@ class Theme(object):
         output_dir = os.path.join(
             self.settings['pyramid_frontend.compiled_asset_dir'],
             self.key)
-        for key, (entry_point, asset_type) in self.stacked_assets.items():
-            assets.compile_asset(theme=self,
-                                 output_dir=output_dir,
-                                 key=key,
-                                 entry_point=entry_point,
-                                 asset_type=asset_type,
-                                 minify=minify)
+        for key, asset in self.stacked_assets.items():
+            asset.compile(key=key,
+                          theme=self,
+                          output_dir=output_dir,
+                          minify=minify)
 
 
 def add_theme(config, cls):

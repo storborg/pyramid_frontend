@@ -12,6 +12,7 @@ executables = [
     'convert',  # From GraphicsMagick or ImageMagick.
     'lessc',
     'r.js',
+    'autoprefixer',
 ]
 
 

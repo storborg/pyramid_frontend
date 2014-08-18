@@ -195,16 +195,10 @@ class TestImagesFunctional(Functional):
         with self.assertRaises(MissingOriginal):
             self.app.get('/img/%s/%s_jpg_thumb.png' % (prefix, name))
 
-    def test_fetch_image_legacy(self):
+    def test_fetch_malformed_url(self):
         name = 'smiley-jpeg-rgb'
         prefix = files.prefix_for_name(name)
-        resp = self.app.get('/img/%s/%s_thumb.png' % (prefix, name))
-        f = BytesIO(resp.body)
-        im = Image.open(f)
-        self.assertEqual(im.size, (200, 200))
-
-    def test_fetch_image_legacy_bad(self):
-        self.app.get('/img/abcd/bad_filename.jpg', status=404)
+        self.app.get('/img/%s/%s_thumb.png' % (prefix, name), status=404)
 
 
 class TestImagesDebug(Functional):

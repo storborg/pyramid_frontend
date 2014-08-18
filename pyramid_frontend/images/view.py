@@ -8,6 +8,7 @@ from pyramid.httpexceptions import HTTPNotFound
 from pyramid.response import Response
 from pyramid.static import FileResponse
 from pyramid.settings import asbool
+from lockfile import FileLock
 
 from .files import filter_sep, prefix_for_name, processed_path, original_path
 
@@ -37,6 +38,26 @@ class MissingOriginal(Exception):
         self.path = path
         self.chain = chain
         Exception.__init__(self, 'Missing file %s' % path)
+
+
+def process_image(settings, name, original_ext, chain):
+    proc_path = processed_path(settings, name, original_ext, chain)
+    if not os.path.exists(proc_path):
+        dest_dir = os.path.dirname(proc_path)
+        try:
+            os.makedirs(dest_dir)
+        except OSError:
+            pass
+
+        lock = FileLock(proc_path + '.lock')
+        with lock:
+            if not os.path.exists(proc_path):
+                orig_path = original_path(settings, name, original_ext)
+                if not os.path.exists(orig_path):
+                    raise MissingOriginal(path=orig_path, chain=chain)
+                image_data = open(orig_path, 'rb')
+                chain.run(proc_path, image_data)
+    return proc_path
 
 
 class ImageView(object):
@@ -86,16 +107,11 @@ class ImageView(object):
         if original_ext not in plausible_extensions:
             raise HTTPNotFound()
 
-        proc_path = processed_path(settings, name, original_ext, chain)
-
-        if not os.path.exists(proc_path):
-            orig_path = original_path(settings, name, original_ext)
-            if not os.path.exists(orig_path):
-                if asbool(settings.get('debug')):
-                    return self.placeholder(chain)
-                else:
-                    raise MissingOriginal(path=orig_path, chain=chain)
-            image_data = open(orig_path, 'rb')
-            chain.run(proc_path, image_data)
-
+        try:
+            proc_path = process_image(settings, name, original_ext, chain)
+        except MissingOriginal:
+            if asbool(settings.get('debug')):
+                return self.placeholder(chain)
+            else:
+                raise
         return FileResponse(proc_path, self.request)

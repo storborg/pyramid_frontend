@@ -59,7 +59,7 @@ class Asset(object):
             os.makedirs(output_dir)
 
         log.debug('Writing to %s ...', file_path)
-        with io.open(file_path, 'w') as f:
+        with io.open(file_path, 'w', encoding='utf8') as f:
             f.write(contents)
 
         map_path = os.path.join(output_dir, key + '.map')
@@ -74,7 +74,7 @@ class Asset(object):
         Like ``write()``, but writes from a source file instead of a buffer
         variable.
         """
-        with io.open(file_name) as f:
+        with io.open(file_name, encoding='utf8') as f:
             contents = f.read()
         return self.write(key, contents, entry_point, output_dir)
 

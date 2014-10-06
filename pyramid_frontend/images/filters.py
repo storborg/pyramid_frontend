@@ -114,6 +114,8 @@ class ThumbFilter(Filter):
         if self.crop_whitespace and is_larger(im, self.dimensions):
             im = im.crop(bounding_box(im))
 
+        # FIXME The enlarge flag should only have any effect if the image
+        # actually needs to be enlarged.
         if self.enlarge:
             factor = max(float(self.dimensions[0]) / im.size[0],
                          float(self.dimensions[1]) / im.size[1])

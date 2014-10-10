@@ -74,7 +74,7 @@ class LessAsset(Asset):
         assert os.path.isfile(start_path), err
         contents = []
         directory = os.path.dirname(start_path)
-        with io.open(start_path) as fp:
+        with io.open(start_path, encoding='utf8') as fp:
             for line in fp:
                 match = self.import_re.match(line.strip())
                 if match:

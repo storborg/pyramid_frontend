@@ -97,7 +97,9 @@ def check_and_save_image(settings, name, f):
     the error directory, and the exception raised by PIL is re-raised.
     """
     try:
-        format, mode = check(f)
+        im = Image.open(f)
+        format = im.format
+        size = im.size
     except IOError:
         save_to_error_dir(settings, name, f)
         raise
@@ -111,4 +113,4 @@ def check_and_save_image(settings, name, f):
     original_ext = possible_extensions[format]
     save_image(settings, name, original_ext, f)
     f.close()
-    return dict(ext=original_ext)
+    return dict(ext=original_ext, size=size)

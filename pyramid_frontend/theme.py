@@ -85,7 +85,7 @@ class Theme(object):
             self.settings.get('pyramid_frontend.template_imports', ''),
             flatten=False))
 
-        debug = asbool(self.settings.get('debug'))
+        debug = asbool(self.settings.get('pyramid_frontend.debug'))
         base_module_dir = \
             self.settings.get('pyramid_frontend.module_directory')
         module_dir = base_module_dir and os.path.join(base_module_dir,

@@ -204,7 +204,7 @@ class TestImagesFunctional(Functional):
 class TestImagesDebug(Functional):
     def setUp(self):
         settings = {
-            'debug': 'true',
+            'pyramid_frontend.debug': 'true',
         }
         self.app = TestApp(utils.make_app(settings))
 

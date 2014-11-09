@@ -40,9 +40,9 @@ class MissingOriginal(Exception):
         Exception.__init__(self, 'Missing file %s' % path)
 
 
-def process_image(settings, name, original_ext, chain):
+def process_image(settings, name, original_ext, chain, overwrite=False):
     proc_path = processed_path(settings, name, original_ext, chain)
-    if not os.path.exists(proc_path):
+    if overwrite or (not os.path.exists(proc_path)):
         dest_dir = os.path.dirname(proc_path)
         try:
             os.makedirs(dest_dir)
@@ -51,7 +51,7 @@ def process_image(settings, name, original_ext, chain):
 
         lock = FileLock(proc_path + '.lock')
         with lock:
-            if not os.path.exists(proc_path):
+            if overwrite or (not os.path.exists(proc_path)):
                 orig_path = original_path(settings, name, original_ext)
                 if not os.path.exists(orig_path):
                     raise MissingOriginal(path=orig_path, chain=chain)
@@ -107,10 +107,14 @@ class ImageView(object):
         if original_ext not in plausible_extensions:
             raise HTTPNotFound()
 
+        debug = asbool(settings.get('pyramid_frontend.debug'))
+        overwrite = debug and request.params.get('overwrite')
+
         try:
-            proc_path = process_image(settings, name, original_ext, chain)
+            proc_path = process_image(settings, name, original_ext, chain,
+                                      overwrite=overwrite)
         except MissingOriginal:
-            if asbool(settings.get('debug')):
+            if debug:
                 return self.placeholder(chain)
             else:
                 raise

@@ -103,7 +103,7 @@ class TestFilters(TestCase):
         f = saver(im)
         nm = Image.open(f)
         self.assertEqual(nm.mode, 'RGBA')
-        self.assertEqual(nm.getpixel((10, 10)), (255, 88, 88, 88))
+        self.assertEqual(nm.getpixel((10, 10)), (255, 88, 88, 127))
 
     def test_file_save(self):
         saver = filters.PNGSaver()

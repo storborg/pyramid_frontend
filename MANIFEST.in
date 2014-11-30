@@ -3,6 +3,7 @@ include CHANGES
 include LICENSE
 include tox.ini
 recursive-include docs *
+recursive-include pyramid_frontend/static *
 
 prune docs/_build
 recursive-exclude * __pycache__

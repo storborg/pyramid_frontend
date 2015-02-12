@@ -67,7 +67,7 @@ class ImageView(object):
 
     def placeholder(self, chain):
         orig_path = pkg_resources.resource_filename('pyramid_frontend.images',
-                                                    'no-image.jpg')
+                                                    'no-image.png')
         image_data = open(orig_path, 'rb')
         f = chain.run_chain(image_data)
 

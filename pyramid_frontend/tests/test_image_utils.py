@@ -50,7 +50,8 @@ class TestUtils(TestCase):
 
     def test_crop_entropy_tall(self):
         im = utils.crop_entropy(self.im, (100, 300))
-        self.assertEqual(im.getpixel((50, 150)), (208, 208, 0))
+        self.assertIn(im.getpixel((50, 150)), [(208, 208, 0),
+                                               (209, 208, 0)])
 
     def test_is_white_background(self):
         self.assertTrue(utils.is_white_background(self.im))

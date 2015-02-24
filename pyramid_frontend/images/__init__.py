@@ -50,7 +50,7 @@ def add_image_filter(config, chain, with_theme=None):
 
 
 def image_url(request, name, original_ext, filter_key,
-              qualified=False, _scheme=None, _host=None):
+              qualified=False, _scheme=None, _host=None, _port=None):
     """
     Return the URL for an image as processed by a specified image filter chain.
     """
@@ -72,7 +72,8 @@ def image_url(request, name, original_ext, filter_key,
                                  prefix=prefix,
                                  name=name,
                                  _scheme=_scheme or request.scheme,
-                                 _host=_host or request.host)
+                                 _host=_host or request.host,
+                                 _port=_port or request.server_port)
     else:
         return request.route_path('pyramid_frontend:images',
                                   prefix=prefix,
@@ -80,7 +81,7 @@ def image_url(request, name, original_ext, filter_key,
 
 
 def image_tag(request, name, original_ext, filter_key,
-              qualified=False, _scheme=None, _host=None, **kwargs):
+              qualified=False, _scheme=None, _host=None, _port=None, **kwargs):
     """
     Return the HTML tag for an image as processed by a specified image filter
     chain.

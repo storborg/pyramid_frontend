@@ -1,6 +1,15 @@
 pyramid_frontend - Theme, Images, Assets Handling for Pyramid
 =============================================================
 
+.. image:: https://secure.travis-ci.org/storborg/pyramid_frontend.png
+    :target: http://travis-ci.org/storborg/pyramid_frontend
+.. image:: https://coveralls.io/repos/storborg/pyramid_frontend/badge.png?branch=master
+    :target: https://coveralls.io/r/storborg/pyramid_frontend
+.. image:: https://pypip.in/v/pyramid_frontend/badge.png
+    :target: https://crate.io/packages/pyramid_frontend
+.. image:: https://pypip.in/d/pyramid_frontend/badge.png
+    :target: https://crate.io/packages/pyramid_frontend
+
 Scott Torborg - `Cart Logic <http://www.cartlogic.com>`_
 
 Provides:

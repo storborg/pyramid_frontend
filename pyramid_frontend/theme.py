@@ -34,6 +34,9 @@ class Theme(object):
     image_filters = []
     includes = []
 
+    cache_impl = None
+    cache_args = None
+
     def __init__(self, settings):
         self.settings = settings
         self._compiled_asset_cache = {}
@@ -97,7 +100,9 @@ class Theme(object):
                                    imports=template_imports,
                                    default_filters=default_filters,
                                    filesystem_checks=debug,
-                                   module_directory=module_dir)
+                                   module_directory=module_dir,
+                                   cache_impl=self.cache_impl,
+                                   cache_args=self.cache_args)
 
     @reify
     def stacked_image_filters(self):

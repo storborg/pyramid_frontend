@@ -8,7 +8,10 @@ from pyramid.httpexceptions import HTTPNotFound
 from pyramid.response import Response
 from pyramid.static import FileResponse
 from pyramid.settings import asbool
-from lockfile import FileLock
+
+# regular FileLock breaks on vboxsf filesystem, since vboxsf doesn't support
+# hard links. MkdirLockFile should work more universally.
+from lockfile.mkdirlockfile import MkdirLockFile as FileLock
 
 from .files import filter_sep, prefix_for_name, processed_path, original_path
 

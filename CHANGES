@@ -1,6 +1,13 @@
 Pyramid-Frontend Changelog
 ==========================
 
+Version 0.4.3
+-------------
+
+- Switch from autoprefixer command line tool to postcss-cli.
+- Clean up Travis CI configuration.
+- Documentation improvements.
+
 Version 0.4
 -----------
 

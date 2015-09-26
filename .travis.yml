@@ -19,7 +19,7 @@ addons:
 before_install:
   - "node -v"
   - "npm -v"
-  - "npm install -g less requirejs autoprefixer postcss-cli"
+  - "npm install -g less requirejs promise autoprefixer postcss-cli"
 
 install:
   - "pip install webtest mock coverage nose-cov flake8 python-coveralls --use-mirrors"

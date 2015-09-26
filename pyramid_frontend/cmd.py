@@ -16,7 +16,7 @@ def run(args):
         log.error("Called process error: %r", e.output)
         raise
     except OSError as e:
-        log.error("OS error: %r", e)
+        log.error("OS error: %r, filename: %r", e, e.filename)
         raise
     except Exception as e:
         log.error("Generic exception: %r", e)

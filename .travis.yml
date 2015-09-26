@@ -13,6 +13,7 @@ addons:
         - optipng
         - pngcrush
         - graphicsmagick
+        - nodejs
 
 before_install:
   - "npm install -g less requirejs autoprefixer postcss-cli"

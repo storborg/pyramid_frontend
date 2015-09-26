@@ -1,6 +1,7 @@
 from __future__ import absolute_import, print_function, division
 
 import os
+import os.path
 import re
 import io
 
@@ -54,6 +55,8 @@ class LessAsset(Asset):
                 lessc_cmd.append(out_name)
                 cmd.run(lessc_cmd)
 
+                assert os.path.exists(out_name), \
+                    "temp file %s disappeared" % out_name
                 autoprefixer_cmd = [self.autoprefixer_path, out_name]
                 cmd.run(autoprefixer_cmd)
 

@@ -15,5 +15,6 @@ def run(args):
     except subprocess.CalledProcessError as e:
         log.error(e.output)
         raise
-    elapsed_time = time.time() - start_time
-    log.debug('Command completed in %0.4f seconds.', elapsed_time)
+    finally:
+        elapsed_time = time.time() - start_time
+        log.debug('Command completed in %0.4f seconds.', elapsed_time)

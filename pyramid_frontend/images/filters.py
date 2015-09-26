@@ -51,14 +51,14 @@ class Filter(object):
         Process an image file (on the filesystem) using a shell command.
         """
         input.seek(0)
-        temp = tempfile.NamedTemporaryFile()
+        temp = tempfile.NamedTemporaryFile(delete=False)
         shutil.copyfileobj(input, temp)
         temp.flush()
 
         if inplace:
             out = temp
         else:
-            out = tempfile.NamedTemporaryFile()
+            out = tempfile.NamedTemporaryFile(delete=False)
 
         processed_args = []
         for arg in args:

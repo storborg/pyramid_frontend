@@ -66,7 +66,7 @@ class Asset(object):
         """
         A context manager helper to generate a temporary file for quick use.
         """
-        f = tempfile.NamedTemporaryFile()
+        f = tempfile.NamedTemporaryFile(delete=False)
         try:
             yield f, f.name
         finally:

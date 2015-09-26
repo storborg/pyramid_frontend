@@ -8,6 +8,31 @@ Theme Inheritance
 Themes can stack on top of another theme by subclassing them.
 
 
+Dynamic Theme Selection
+-----------------------
+
+In typical usage, themes are generally static and sitewide. However, it is
+possible to dynamically select a theme on a per-request basis using a custom
+*theme strategy*.
+
+The theme strategy is set via a config directive, and is simply a function
+which takes a single ``request`` argument and returns a string referencing the
+selected theme.
+
+Here's an example theme strategy which uses a specific ``apple`` theme for
+Apple mobile devices, and the ``orange`` theme for all other requests.
+
+.. code-block:: python
+
+    def user_agent_theme_strategy(request):
+        if request.user_agent.startswith('Apple-'):
+            return 'apple'
+        else:
+            return 'orange'
+
+    config.set_theme_strategy(user_agent_theme_strategy)
+
+
 Templates
 ~~~~~~~~~
 

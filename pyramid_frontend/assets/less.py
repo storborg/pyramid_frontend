@@ -8,6 +8,7 @@ from webhelpers2.html.tags import HTML
 
 import six
 
+from .. import cmd
 from .asset import Asset
 
 
@@ -51,10 +52,10 @@ class LessAsset(Asset):
             with self.tempfile() as (out_f, out_name):
 
                 lessc_cmd.append(out_name)
-                self.run_command(lessc_cmd)
+                cmd.run(lessc_cmd)
 
                 autoprefixer_cmd = [self.autoprefixer_path, out_name]
-                self.run_command(autoprefixer_cmd)
+                cmd.run(autoprefixer_cmd)
 
                 file_path = self.write_from_file(key, out_name, entry_point,
                                                  output_dir)

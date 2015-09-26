@@ -6,7 +6,7 @@ from mock import patch
 from unittest import TestCase
 from six import StringIO
 
-from .. import compile
+from .. import compile, cmd
 from ..assets.asset import Asset
 from ..assets.less import LessAsset
 from ..assets.requirejs import RequireJSAsset
@@ -55,7 +55,7 @@ class TestAsset(TestCase):
                 argv = [
                     'false',
                 ]
-                asset.run_command(argv)
+                cmd.run(argv)
         # XXX Try to test that this actually prints the stdout output of a
         # failed comamnd.
 

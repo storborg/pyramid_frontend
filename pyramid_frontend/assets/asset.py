@@ -24,21 +24,6 @@ class Asset(object):
     def __init__(self, url_path):
         self.url_path = url_path
 
-    def run_command(self, argv):
-        """
-        Run a shell command, and check the output.
-        """
-        log.debug('Running command: %s ...', ' '.join(argv))
-        start_time = time.time()
-        try:
-            # FIXME Should this really be capturing stderr to stdout?
-            subprocess.check_output(argv, stderr=subprocess.STDOUT)
-        except subprocess.CalledProcessError as e:
-            log.error(e.output)
-            raise
-        elapsed_time = time.time() - start_time
-        log.debug('Command completed in %0.4f seconds.', elapsed_time)
-
     def write(self, key, contents, entry_point, output_dir):
         """
         Write the compiled result for a particular entry point to the

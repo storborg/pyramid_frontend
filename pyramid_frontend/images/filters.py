@@ -9,6 +9,7 @@ from six.moves import xrange
 
 from PIL import Image
 
+from .. import cmd
 from .utils import (pad_image, flatten_alpha, crop_entropy,
                     is_white_background, is_larger, bounding_box, sharpen)
 
@@ -68,9 +69,7 @@ class Filter(object):
                 arg = out.name
             processed_args.append(arg)
 
-        subprocess.check_output(processed_args,
-                                stderr=subprocess.STDOUT,
-                                close_fds=True)
+        cmd.run(processed_args)
         out.seek(0)
         return out
 

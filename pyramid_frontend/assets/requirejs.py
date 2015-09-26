@@ -6,6 +6,7 @@ import os
 
 from webhelpers2.html.tags import HTML
 
+from .. import cmd
 from .asset import Asset
 
 log = logging.getLogger(__name__)
@@ -76,7 +77,7 @@ class RequireJSAsset(Asset):
 
         log.debug("main: %r", main)
 
-        cmd = [
+        args = [
             'r.js', '-o',
             'baseUrl={0}'.format(base_url),
             'mainConfigFile={0}'.format(main_config),
@@ -86,17 +87,17 @@ class RequireJSAsset(Asset):
         ]
 
         if not minify:
-            cmd.append('optimize=none')
+            args.append('optimize=none')
 
         # Add RequireJS paths for theme
         for dir_ref, dir in theme.keyed_static_dirs:
             dir = os.path.join(dir, 'js')
             log.debug("path _%s -> %s", key, dir)
-            cmd.append('paths.{}={}'.format(dir_ref, dir))
+            args.append('paths.{}={}'.format(dir_ref, dir))
 
         with self.tempfile() as (f, temp_name):
-            cmd.append('out={0}'.format(temp_name))
-            self.run_command(cmd)
+            args.append('out={0}'.format(temp_name))
+            cmd.run(args)
             file_path = self.write_from_file(key, temp_name, self.url_path,
                                              output_dir)
 

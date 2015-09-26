@@ -23,11 +23,11 @@ class LessAsset(Asset):
     def __init__(self, url_path,
                  less_path='/_pfe/less.js',
                  lessc_path='lessc',
-                 autoprefixer_path='autoprefixer'):
+                 postcss_path='postcss'):
         self.url_path = url_path
         self.less_path = less_path
         self.lessc_path = lessc_path
-        self.autoprefixer_path = autoprefixer_path
+        self.postcss_path = postcss_path
 
     def compile(self, key, theme, output_dir, minify=True):
         """
@@ -45,17 +45,20 @@ class LessAsset(Asset):
 
         preprocessed = preprocessed.encode('utf-8')
 
-        with self.tempfile() as (in_f, in_name):
-            in_f.write(preprocessed)
-            in_f.flush()
-            lessc_cmd = lessc_flags + [in_name]
-            with self.tempfile() as (out_f, out_name):
-
-                lessc_cmd.append(out_name)
+        with self.tempfile() as (inter_f, inter_name):
+            with self.tempfile() as (in_f, in_name):
+                in_f.write(preprocessed)
+                in_f.flush()
+                lessc_cmd = lessc_flags + [in_name]
+                lessc_cmd.append(inter_name)
                 cmd.run(lessc_cmd)
 
-                autoprefixer_cmd = [self.autoprefixer_path, out_name]
-                cmd.run(autoprefixer_cmd)
+            with self.tempfile() as (out_f, out_name):
+                postcss_cmd = [self.postcss_path,
+                               '--use', 'autoprefixer',
+                               '--output', out_name,
+                               inter_name]
+                cmd.run(postcss_cmd)
 
                 file_path = self.write_from_file(key, out_name, entry_point,
                                                  output_dir)

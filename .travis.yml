@@ -8,7 +8,7 @@ python:
 
 addons:
     apt:
-        sources:
+        packages:
         - jpegoptim
         - optipng
         - pngcrush

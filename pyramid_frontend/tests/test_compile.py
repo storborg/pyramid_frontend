@@ -48,7 +48,6 @@ class TestAsset(TestCase):
         self.output_dir = os.path.join(utils.work_dir, 'compile-tests')
 
     def test_bad_shell(self):
-        asset = Asset(None)
         buf = StringIO()
         with patch('sys.stdout', buf):
             with self.assertRaises(subprocess.CalledProcessError):

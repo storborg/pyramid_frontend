@@ -2,7 +2,6 @@ from __future__ import absolute_import, print_function, division
 
 import shutil
 import tempfile
-import subprocess
 import math
 from six import BytesIO
 from six.moves import xrange

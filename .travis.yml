@@ -6,9 +6,6 @@ python:
   - "3.3"
   - "3.4"
 
-node_js:
-  - "0.12"
-
 addons:
     apt:
         packages:
@@ -18,6 +15,8 @@ addons:
         - graphicsmagick
 
 before_install:
+  - "nvm install 0.12"
+  - "nvm use 0.12"
   - "node -v"
   - "npm -v"
   - "npm install -g less requirejs autoprefixer postcss-cli"

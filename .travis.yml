@@ -5,6 +5,7 @@ python:
   - "2.7"
   - "3.3"
   - "3.4"
+  - "3.5"
 
 addons:
     apt:
@@ -22,8 +23,8 @@ before_install:
   - "npm install -g less requirejs autoprefixer postcss-cli"
 
 install:
-  - "pip install webtest mock coverage nose-cov flake8 python-coveralls --use-mirrors"
-  - "pip install -e . --use-mirrors"
+  - "pip install webtest mock coverage nose-cov flake8 python-coveralls"
+  - "pip install -e ."
 
 before_script: "flake8"
 

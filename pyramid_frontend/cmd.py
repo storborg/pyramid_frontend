@@ -13,7 +13,13 @@ def run(args):
     try:
         subprocess.check_output(args, stderr=subprocess.STDOUT, close_fds=True)
     except subprocess.CalledProcessError as e:
-        log.error(e.output)
+        log.error("Called process error: %r", e.output)
+        raise
+    except OSError as e:
+        log.error("OS error: %r", e)
+        raise
+    except Exception as e:
+        log.error("Generic exception: %r", e)
         raise
     finally:
         elapsed_time = time.time() - start_time

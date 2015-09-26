@@ -14,8 +14,11 @@ addons:
         - pngcrush
         - graphicsmagick
         - nodejs
+        - npm
 
 before_install:
+  - "node -v"
+  - "npm -v"
   - "npm install -g less requirejs autoprefixer postcss-cli"
 
 install:

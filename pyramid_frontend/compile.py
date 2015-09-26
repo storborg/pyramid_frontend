@@ -8,7 +8,7 @@ import sys
 from pyramid.paster import bootstrap
 
 
-def compile(registry, minify=True):
+def compile(registry, minify=True, only_theme=None):
     """
     Compile static assets for all themes which are registered in ``registry``.
     """
@@ -18,8 +18,11 @@ def compile(registry, minify=True):
     themes = theme_registry.values()
     count = len(themes)
     for ii, theme in enumerate(themes):
-        log.warn("%d / %d - Compiling theme: %s", ii + 1, count, theme.key)
-        theme.compile(minify=minify)
+        if only_theme and (theme.key != only_theme):
+            log.warn("%d / %d - Skipping theme: %s", ii + 1, count, theme.key)
+        else:
+            log.warn("%d / %d - Compiling theme: %s", ii + 1, count, theme.key)
+            theme.compile(minify=minify)
 
 
 class ConsoleHandler(logging.StreamHandler):
@@ -79,6 +82,7 @@ def main(args=sys.argv):
     parser = argparse.ArgumentParser(description='Compile static assets.')
     parser.add_argument('--no-minify', action='store_true', default=False)
     parser.add_argument('-v', '--verbose', action='count', default=2)
+    parser.add_argument('-t', '--theme', default=None)
     parser.add_argument('config_uri')
 
     options = parser.parse_args(args[1:])
@@ -86,5 +90,5 @@ def main(args=sys.argv):
     env = bootstrap(options.config_uri)
     configure_logging(options.verbose)
     registry = env['registry']
-    compile(registry, minify=(not options.no_minify))
+    compile(registry, minify=(not options.no_minify), only_theme=options.theme)
     return 0

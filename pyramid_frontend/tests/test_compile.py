@@ -7,7 +7,6 @@ from unittest import TestCase
 from six import StringIO
 
 from .. import compile, cmd
-from ..assets.asset import Asset
 from ..assets.less import LessAsset
 from ..assets.requirejs import RequireJSAsset
 from ..assets.svg import SVGAsset

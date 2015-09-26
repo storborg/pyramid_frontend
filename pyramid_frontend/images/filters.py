@@ -54,7 +54,6 @@ class Filter(object):
         temp = tempfile.NamedTemporaryFile()
         shutil.copyfileobj(input, temp)
         temp.flush()
-        null = open('/dev/null', 'wb')
 
         if inplace:
             out = temp
@@ -69,10 +68,9 @@ class Filter(object):
                 arg = out.name
             processed_args.append(arg)
 
-        subprocess.check_call(processed_args,
-                              stdout=null,
-                              stderr=null,
-                              close_fds=True)
+        subprocess.check_output(processed_args,
+                                stderr=subprocess.STDOUT,
+                                close_fds=True)
         out.seek(0)
         return out
 

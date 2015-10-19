@@ -102,6 +102,8 @@ class ThumbFilter(Filter):
         else:
             should_entropy_crop = False
 
+        bgcolor = im.getpixel((0, 0))
+
         # FIXME The cropping behavior is not really correct here for dimensions
         # that are partially unspecified.
         if should_entropy_crop and is_larger(im, self.dimensions):
@@ -133,7 +135,7 @@ class ThumbFilter(Filter):
         if self.pad:
             w = _pad_dim(im.size[0], self.dimensions[0], self.pad)
             h = _pad_dim(im.size[1], self.dimensions[1], self.pad)
-            im = pad_image(im, (w, h))
+            im = pad_image(im, (w, h), color=bgcolor)
         return im
 
 

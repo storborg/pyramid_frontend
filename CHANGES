@@ -6,6 +6,8 @@ Version 0.4.3
 
 - Switch from autoprefixer command line tool to postcss-cli.
 - Clean up Travis CI configuration.
+- Fix a bug where images would always be padded with white, instead of the
+  image background color.
 - Documentation improvements.
 
 Version 0.4

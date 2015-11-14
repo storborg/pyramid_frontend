@@ -1,6 +1,12 @@
 Pyramid-Frontend Changelog
 ==========================
 
+Version 0.4.4
+-------------
+
+- Fix an issue where ThumbFilter would fail to process LA-mode images that
+  required padding.
+
 Version 0.4.3
 -------------
 

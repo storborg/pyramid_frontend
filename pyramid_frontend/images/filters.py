@@ -102,7 +102,7 @@ class ThumbFilter(Filter):
         else:
             should_entropy_crop = False
 
-        bgcolor = im.getpixel((0, 0))
+        bgcolor = im.convert('RGBA').getpixel((0, 0))
 
         # FIXME The cropping behavior is not really correct here for dimensions
         # that are partially unspecified.

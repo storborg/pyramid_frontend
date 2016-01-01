@@ -8,7 +8,7 @@ from six import StringIO
 
 from .. import compile, cmd
 from ..assets.less import LessAsset
-from ..assets.requirejs import RequireJSAsset
+from ..assets.requirejs import RequireJSAsset, js_preamble
 from ..assets.svg import SVGAsset
 
 from . import utils
@@ -87,6 +87,7 @@ class TestAsset(TestCase):
         self.assertGreater(len(buf_minified), 0)
 
         # Test that minified version is smaller than non-minified.
+        preamble_size = len(js_preamble)
         asset = RequireJSAsset('/_foo/js/main.js')
         path = asset.compile(key='main-js',
                              theme=self.theme,
@@ -95,7 +96,7 @@ class TestAsset(TestCase):
         f = open(path, 'rb')
         buf_unminified = f.read()
 
-        self.assertLess(len(buf_minified), len(buf_unminified))
+        self.assertLess(len(buf_minified) - preamble_size, len(buf_unminified))
 
     def test_svg_compile(self):
         asset = SVGAsset('/_foo/images/logo.svg')

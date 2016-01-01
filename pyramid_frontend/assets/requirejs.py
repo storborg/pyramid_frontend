@@ -3,6 +3,7 @@ from __future__ import absolute_import, print_function, division
 import logging
 
 import os
+import io
 
 from webhelpers2.html.tags import HTML, literal
 
@@ -97,10 +98,10 @@ class RequireJSAsset(Asset):
             args.append('out={0}'.format(temp_name))
             cmd.run(args)
 
-            f.seek(0)
-            contents = f.read().decode('utf8')
-            contents = '\n'.join([js_preamble, contents])
+            with io.open(temp_name, encoding='utf8') as f:
+                contents = f.read()
 
+            contents = '\n'.join([js_preamble, contents])
             file_path = self.write(key, contents, self.url_path, output_dir)
 
         return file_path

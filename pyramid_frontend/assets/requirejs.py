@@ -4,7 +4,7 @@ import logging
 
 import os
 
-from webhelpers2.html.tags import HTML
+from webhelpers2.html.tags import HTML, literal
 
 from .. import cmd
 from .asset import Asset
@@ -13,14 +13,12 @@ log = logging.getLogger(__name__)
 
 
 js_preamble = '''\
-<script>
-  if (typeof console === 'undefined') {
-    console = {
-      log: function () {},
-      debug: function () {}
-    }
+if (typeof console === 'undefined') {
+  console = {
+    log: function () {},
+    debug: function () {}
   }
-</script>
+}
 '''
 
 
@@ -98,8 +96,12 @@ class RequireJSAsset(Asset):
         with self.tempfile() as (f, temp_name):
             args.append('out={0}'.format(temp_name))
             cmd.run(args)
-            file_path = self.write_from_file(key, temp_name, self.url_path,
-                                             output_dir)
+
+            f.seek(0)
+            contents = f.read().decode('utf8')
+            contents = '\n'.join([js_preamble, contents])
+
+            file_path = self.write(key, contents, self.url_path, output_dir)
 
         return file_path
 
@@ -108,7 +110,7 @@ class RequireJSAsset(Asset):
         Return an HTML fragment to use a require.js entry point in development.
         """
         return ''.join([
-            js_preamble,
+            HTML.script(literal(js_preamble)),
             HTML.script(src=self.require_config_path),
             render_js_paths(theme),
             HTML.script(src=self.require_path),
@@ -119,9 +121,4 @@ class RequireJSAsset(Asset):
         """
         Return an HTML fragment to use a require.js entry point in production.
         """
-        # FIXME Include the js preamble in the minified file itself, so it
-        # doesn't have to be added to each tag fragment.
-        return ''.join([
-            js_preamble,
-            HTML.script(src=url),
-        ])
+        return HTML.script(src=url)

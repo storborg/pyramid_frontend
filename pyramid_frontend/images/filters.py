@@ -79,12 +79,14 @@ class ThumbFilter(Filter):
     changing size.
     """
     def __init__(self, dimensions, pad=False, crop=False,
-                 crop_whitespace=False, background='white', enlarge=False):
+                 crop_whitespace=False, crop_whitespace_pad=0,
+                 background='white', enlarge=False):
 
         self.dimensions = dimensions
         self.pad = pad
         self.crop = crop
         self.crop_whitespace = crop_whitespace
+        self.crop_whitespace_pad = crop_whitespace_pad
         self.background = background
         self.enlarge = enlarge
 
@@ -110,7 +112,14 @@ class ThumbFilter(Filter):
             im = crop_entropy(im, self.dimensions)
 
         if self.crop_whitespace and is_larger(im, self.dimensions):
+            has_white_background = is_white_background(im, tolerance=0)
             im = im.crop(bounding_box(im))
+            if has_white_background:
+                xpad = int(self.crop_whitespace_pad * im.size[0])
+                ypad = int(self.crop_whitespace_pad * im.size[1])
+                pad_dims = (im.size[0] + (2 * xpad),
+                            im.size[1] + (2 * ypad))
+                im = pad_image(im, pad_dims)
 
         # FIXME The enlarge flag should only have any effect if the image
         # actually needs to be enlarged.

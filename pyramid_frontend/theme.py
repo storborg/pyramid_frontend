@@ -10,7 +10,7 @@ from pyramid.path import DottedNameResolver
 
 from .templating.lookup import SuperTemplateLookup
 from .templating.renderer import (mako_renderer_factory,
-                                  mako_renderer_factory_nofilters)
+                                  mako_renderer_factory_txt)
 
 static_dir = pkg_resources.resource_filename('pyramid_frontend', 'static')
 
@@ -271,4 +271,4 @@ def includeme(config):
     config.add_request_method(theme, 'theme', reify=True)
 
     config.add_renderer(name='.html', factory=mako_renderer_factory)
-    config.add_renderer(name='.txt', factory=mako_renderer_factory_nofilters)
+    config.add_renderer(name='.txt', factory=mako_renderer_factory_txt)

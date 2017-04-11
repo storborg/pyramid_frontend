@@ -26,9 +26,9 @@ class MakoRenderer(object):
     templates.
     """
 
-    def __init__(self, info, clear_default_filters=False):
+    def __init__(self, info, plaintext=False):
         self.name = info.name
-        self.clear_default_filters = clear_default_filters
+        self.plaintext = plaintext
 
     def __call__(self, value, system):
         """Find and render a template.
@@ -58,8 +58,12 @@ class MakoRenderer(object):
         request = system['request']
 
         theme = request.theme
-        if self.clear_default_filters:
+        if self.plaintext:
             lookup = theme.lookup_nofilters
+            response = request.response
+            ct = response.content_type
+            if ct == response.default_content_type:
+                response.content_type = 'text/plain'
         else:
             lookup = theme.lookup
 
@@ -87,10 +91,10 @@ def mako_renderer_factory(info):
     return MakoRenderer(info)
 
 
-def mako_renderer_factory_nofilters(info):
+def mako_renderer_factory_txt(info):
     """
     A Pyramid renderer factory to render Mako templates with no default
     HTML-escaping filters. This renderer factory should generally be used for
     plaintext templates rather than HTML.
     """
-    return MakoRenderer(info, clear_default_filters=True)
+    return MakoRenderer(info, plaintext=True)

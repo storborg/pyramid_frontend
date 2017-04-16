@@ -41,6 +41,10 @@ class MissingOriginal(Exception):
 
 
 def process_image(settings, name, original_ext, chain, overwrite=False):
+    orig_path = original_path(settings, name, original_ext)
+    if not os.path.exists(orig_path):
+        raise MissingOriginal(path=orig_path, chain=chain)
+
     proc_path = processed_path(settings, name, original_ext, chain)
     if overwrite or (not os.path.exists(proc_path)):
         dest_dir = os.path.dirname(proc_path)
@@ -52,9 +56,6 @@ def process_image(settings, name, original_ext, chain, overwrite=False):
         lock = FileLock(proc_path + '.lock')
         with lock:
             if overwrite or (not os.path.exists(proc_path)):
-                orig_path = original_path(settings, name, original_ext)
-                if not os.path.exists(orig_path):
-                    raise MissingOriginal(path=orig_path, chain=chain)
                 image_data = open(orig_path, 'rb')
                 chain.run(proc_path, image_data)
     return proc_path

@@ -6,7 +6,7 @@ pyramid_frontend - Theme, Images, Assets Handling for Pyramid
 .. image:: https://coveralls.io/repos/storborg/pyramid_frontend/badge.png?branch=master
     :target: https://coveralls.io/r/storborg/pyramid_frontend
 
-Scott Torborg - `Cart Logic <http://www.cartlogic.com>`_
+Author: `Scott Torborg <https://www.scotttorborg.com>`_
 
 Provides:
 
@@ -53,8 +53,7 @@ There are no `PEP8 <http://www.python.org/dev/peps/pep-0008/>`_ or
 `Pyflakes <http://pypi.python.org/pypi/pyflakes>`_ warnings in the codebase. To
 verify that::
 
-    $ pip install pep8 pyflakes
-    $ pep8 .
-    $ pyflakes .
+    $ pip install flake8
+    $ flake8
 
 Any pull requests must maintain the sanctity of these three pillars.

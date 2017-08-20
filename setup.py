@@ -35,11 +35,16 @@ class build(_build):
                 print(fpath)
 
 
+long_description = '''Please see
+`the documentation <http://pyramid-frontend.readthedocs.org/en/latest/>`_.
+'''
+
+
 setup(name='pyramid_frontend',
       cmdclass={'build': build},
       version='0.6.5',
       description='Themes, image filtering, and frontend asset handling.',
-      long_description='',
+      long_description=long_description,
       classifiers=[
           'Development Status :: 3 - Alpha',
           'License :: OSI Approved :: MIT License',
@@ -53,9 +58,9 @@ setup(name='pyramid_frontend',
           'Topic :: Multimedia :: Graphics',
       ],
       keywords='pyramid themes frontend assets',
-      url='http://github.com/cartlogic/pyramid_frontend',
+      url='http://github.com/storborg/pyramid_frontend',
       author='Scott Torborg',
-      author_email='scott@cartlogic.com',
+      author_email='storborg@gmail.com',
       install_requires=[
           'Pyramid>=1.4.5',
           'Pillow>=2.1.0',      # Provides PIL

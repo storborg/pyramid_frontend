@@ -29,16 +29,18 @@ class TestCompileCommand(TestCase):
             self.assertEqual(exit_exception.code, 2)
         self.assertIn('config_uri', buf.getvalue())
 
+    @utils.requires_exe('lessc', 'postcss', 'r.js')
     def test_pcompile(self):
         args = ['pcompile', utils.test_ini_path]
         retcode = compile.main(args)
         self.assertEqual(retcode, 0)
 
+    @utils.requires_exe('lessc', 'postcss', 'r.js')
     def test_pcompile_no_minify(self):
         args = ['pcompile', utils.test_ini_path, '--no-minify']
         retcode = compile.main(args)
         self.assertEqual(retcode, 0)
-        # XXX Try to assett hat this makes longer assets or something.
+        # XXX Try to assert that this makes longer assets or something.
 
 
 class TestAsset(TestCase):
@@ -57,6 +59,7 @@ class TestAsset(TestCase):
         # XXX Try to test that this actually prints the stdout output of a
         # failed comamnd.
 
+    @utils.requires_exe('lessc', 'postcss')
     def test_less_compile(self):
         asset = LessAsset('/_foo/css/main.less')
         path = asset.compile(key='main-less',
@@ -77,6 +80,7 @@ class TestAsset(TestCase):
 
         self.assertLess(len(buf_minified), len(buf_unminified))
 
+    @utils.requires_exe('r.js')
     def test_requirejs_compile(self):
         asset = RequireJSAsset('/_foo/js/main.js')
         path = asset.compile(key='main-js',

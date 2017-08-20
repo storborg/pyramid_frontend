@@ -1,7 +1,7 @@
 from __future__ import absolute_import, print_function, division
 
 import re
-from unittest import TestCase
+from unittest import TestCase, SkipTest
 from six import BytesIO
 
 from webtest import TestApp
@@ -88,6 +88,11 @@ class TestCompiledFunctional(Functional):
 
     def setUp(self):
         Functional.setUp(self)
+        if not (utils.which('lessc') and
+                utils.which('postcss') and
+                utils.which('r.js')):
+            raise SkipTest(
+                "Missing required executables: lessc, postcss, r.js")
         utils.compile_assets()
 
     def test_js_tag(self):

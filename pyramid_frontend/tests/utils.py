@@ -5,6 +5,7 @@ import os
 import os.path
 import glob
 import shutil
+import unittest
 
 from pyramid.config import Configurator
 
@@ -13,6 +14,20 @@ from pyramid_frontend.images.files import check_and_save_image
 from pyramid_frontend.images.chain import FilterChain
 
 from .. import compile
+
+
+def which(exe):
+    for path in os.environ['PATH'].split(os.pathsep):
+        fpath = os.path.join(path, exe)
+        if os.path.exists(fpath) and os.access(fpath, os.X_OK):
+            return fpath
+
+
+def requires_exe(*args):
+    if all(which(exe) for exe in args):
+        return lambda func: func
+    return unittest.skip("missing executable(s) required for this test: %s" %
+                         ', '.join(args))
 
 
 samples_dir = pkg_resources.resource_filename('pyramid_frontend.tests', 'data')

@@ -3,8 +3,6 @@ sudo: false
 
 python:
   - "2.7"
-  - "3.3"
-  - "3.4"
   - "3.5"
 
 addons:
@@ -16,8 +14,8 @@ addons:
         - graphicsmagick
 
 before_install:
-  - "nvm install 0.12"
-  - "nvm use 0.12"
+  - "nvm install 4.2.1"
+  - "nvm use 4.2.1"
   - "node -v"
   - "npm -v"
   - "npm install -g less requirejs autoprefixer postcss-cli"
